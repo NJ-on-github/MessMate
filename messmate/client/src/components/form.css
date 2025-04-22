@@ -1,0 +1,11 @@
+@import url(../common.css);
+
+form input {
+    display: block;
+    width: 100%;
+    box-sizing: border-box;
+    padding: var(--space-sm);
+    border-radius: var(--space-sm);
+    border-color: var(--col-gray-500);
+    box-shadow: none;
+}
