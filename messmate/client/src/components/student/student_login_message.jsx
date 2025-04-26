@@ -1,6 +1,6 @@
 import React from 'react'
 import './student_login_message.css'
-import  '../common.css'
+import '../common/form.css'
 
 const student_login_message = (props) => {
   return (

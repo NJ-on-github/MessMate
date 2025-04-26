@@ -15,6 +15,7 @@
     --col-primary-900: #381C00;
 
     /* secondary color palette */
+    --col-secondary-50: #E1F0FF;
     --col-secondary-100: #B1CDF8;
     --col-secondary-200: #629BF0;
     --col-secondary-300: #1669E7;
@@ -96,7 +97,14 @@ body {
     justify-content: center;
     background-color: var(--col-gray-100);
     color: var(--col-gray-900);
-    margin: 0;
     padding: 42px;
+    width: 80vw;
+    max-width: 1240px;
 }
 
+#root {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 100%;
+}

@@ -1,0 +1,31 @@
+@import url(../../common.css);
+
+table {
+    width: 100%;
+    border: 1px solid var(--col-secondary-500);
+    border-collapse: collapse;
+    border-radius: 0.5rem;
+    /* overflow: hidden;
+    box-sizing:content-box; */
+}
+thead {
+    border-radius: 0.5rem;
+    overflow: hidden;
+}
+th{
+    padding: 12px;
+    text-align: left;
+    background-color: var(--col-secondary-50);
+    color: var(--col-gray-900);
+    font-weight: 600;
+    border-bottom: 1px solid #ccc;
+}
+
+tr {
+    border-bottom: 1px solid #ccc;
+}
+td {
+    padding: 12px;
+    text-align: left;
+    border: 1px solid var(--col-gray-500);
+}

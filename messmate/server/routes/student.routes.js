@@ -40,7 +40,7 @@ router.post('/register', async (req, res) => {
         res.status(500).json({ error: 'Registration failed.' });
     }
 });
-router.get('/student/payments/:student_id', async (req, res) => {
+router.get('/payments/:student_id', async (req, res) => {
     const studentId = req.params.student_id;
 
     try {
@@ -52,7 +52,7 @@ router.get('/student/payments/:student_id', async (req, res) => {
     }
 });
 
-router.get('/student/dashboard/:student_id', async (req, res) => {
+router.get('/dashboard/:student_id', async (req, res) => {
     const studentId = req.params.student_id;
 
     try {
@@ -68,32 +68,32 @@ router.get('/student/dashboard/:student_id', async (req, res) => {
 });
 
 
-router.get('/student/todays-menu', async (req, res) => {
+router.get('/todays-menu', async (req, res) => {
     try {
-      const menuIdResult = await pool.query(queries.GET_TODAYS_MENU_ID);
-      if (menuIdResult.rows.length === 0) {
-        return res.json({ breakfast: [], lunch: [], dinner: [] });
-      }
-  
-      const menuId = menuIdResult.rows[0].id;
-  
-      const [breakfast, lunch, dinner] = await Promise.all([
-        pool.query(queries.GET_TODAYS_BREAKFAST, [menuId]),
-        pool.query(queries.GET_TODAYS_LUNCH, [menuId]),
-        pool.query(queries.GET_TODAYS_DINNER, [menuId])
-      ]);
-  
-      res.json({
-        breakfast: breakfast.rows.map(r => r.name),
-        lunch: lunch.rows.map(r => r.name),
-        dinner: dinner.rows.map(r => r.name)
-      });
-  
+        const menuIdResult = await pool.query(queries.GET_TODAYS_MENU_ID);
+        if (menuIdResult.rows.length === 0) {
+            return res.json({ breakfast: [], lunch: [], dinner: [] });
+        }
+
+        const menuId = menuIdResult.rows[0].id;
+
+        const [breakfast, lunch, dinner] = await Promise.all([
+            pool.query(queries.GET_TODAYS_BREAKFAST, [menuId]),
+            pool.query(queries.GET_TODAYS_LUNCH, [menuId]),
+            pool.query(queries.GET_TODAYS_DINNER, [menuId])
+        ]);
+
+        res.json({
+            breakfast: breakfast.rows.map(r => r.name),
+            lunch: lunch.rows.map(r => r.name),
+            dinner: dinner.rows.map(r => r.name)
+        });
+
     } catch (err) {
-      console.error(err);
-      res.status(500).json({ error: 'Failed to fetch today’s menu.' });
+        console.error(err);
+        res.status(500).json({ error: 'Failed to fetch today’s menu.' });
     }
-  });
-  
+});
+
 
 module.exports = router;

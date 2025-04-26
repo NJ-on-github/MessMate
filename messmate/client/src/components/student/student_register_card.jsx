@@ -1,7 +1,6 @@
 import React from 'react'
 import './student_register_card.css'
-import './form.css'
-import  '../common.css'
+import '../common/form.css'
 
 const student_register_card = () => {
   return (
