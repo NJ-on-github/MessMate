@@ -3,43 +3,47 @@ const router = express.Router();
 const pool = require('../db.js');
 const queries = require('../queries/queries.js');
 
-router.post('/register', async (req, res) => {
 
+router.post('/register', async (req, res) => {
     const { name, email, password, hostel_name, branch } = req.body;
 
+    const client = await pool.connect();
+
     try {
-        // Insert into users table
-        const userResult = await pool.query(queries.INSERT_USER, [
-            name,
-            email,
-            password,
-            'student'
-        ]);
+        await client.query('BEGIN');
+
+        // 1. Insert into users table
+        const userResult = await client.query(
+            queries.INSERT_USER,
+            [name, email, password, 'student']
+        );
         const userId = userResult.rows[0].user_id;
 
-        // Insert into students table (pending by default)
-        const studentResult = await pool.query(queries.INSERT_STUDENT, [
-            userId,
-            hostel_name,
-            branch
-        ]);
+        // 2. Insert into students table
+        const studentResult = await client.query(
+            queries.INSERT_STUDENT,
+            [userId, hostel_name, branch, 'pending']
+        );
         const studentId = studentResult.rows[0].student_id;
 
-        // Create entry in account_status (not blocked)
-        await pool.query(queries.INSERT_ACCOUNT_STATUS, [studentId]);
+        // 3. Insert into account_status table
+        await client.query(
+            queries.INSERT_ACCOUNT_STATUS,
+            [studentId]
+        );
 
-        // Respond with success
-        res.status(201).json({
-            message: 'Registration successful. Awaiting admin approval.',
-            student_id: studentId
-        });
+        await client.query('COMMIT');
+        res.status(201).json({ message: 'Registration successful! Please wait for admin approval.' });
 
-    }
-    catch (error) {
-        console.error(error);
-        res.status(500).json({ error: 'Registration failed.' });
+    } catch (err) {
+        await client.query('ROLLBACK');
+        console.error('Error during registration:', err);
+        res.status(500).json({ error: 'Failed to register. Please try again.' });
+    } finally {
+        client.release();
     }
 });
+
 router.get('/payments/:student_id', async (req, res) => {
     const studentId = req.params.student_id;
 

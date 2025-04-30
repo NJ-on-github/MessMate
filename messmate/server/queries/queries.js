@@ -1,5 +1,9 @@
 // queries.js
 
+//admin login
+const MATCH_ADMIN_LOGIN = `
+  SELECT * FROM users WHERE email = $1 AND role = 'admin';`;
+
 // ✅ User + Student registration
 const INSERT_USER = `
   INSERT INTO users (name, email, password_hash, role)
@@ -8,14 +12,14 @@ const INSERT_USER = `
 `;
 
 const INSERT_STUDENT = `
-  INSERT INTO students (user_id, hostel_name, branch)
-  VALUES ($1, $2, $3)
+  INSERT INTO students (user_id, hostel_name, branch, registration_status)
+  VALUES ($1, $2, $3, $4)
   RETURNING student_id;
 `;
 
 const INSERT_ACCOUNT_STATUS = `
-  INSERT INTO account_status (student_id, is_blocked)
-  VALUES ($1, false);
+  INSERT INTO account_status (student_id, is_blocked, blocked_reason)
+  VALUES ($1, false, NULL);
 `;
 
 // Student - Get all payments
@@ -203,6 +207,7 @@ const GET_TODAYS_DINNER = `
 
 
 module.exports = {
+    MATCH_ADMIN_LOGIN,
     INSERT_USER,
     INSERT_STUDENT,
     INSERT_ACCOUNT_STATUS,

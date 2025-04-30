@@ -1,0 +1,6 @@
+@import url('../../common.css');
+
+.active-navbar-component {
+    background-color: antiquewhite;
+    color: blueviolet;
+}

@@ -27,7 +27,7 @@ const pending_approvals_list = () => {
 
     useEffect(() => {
         fetchPendingApprovals();
-    })
+    },[])
 
 
     const approveRegistration = async (studentId) => {

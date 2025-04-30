@@ -3,6 +3,34 @@ const router = express.Router();
 const pool = require('../db.js');
 const queries = require('../queries/queries.js');
 
+router.post('/login', async (req, res) => {
+  const { email, password } = req.body;
+
+  try {
+    const adminResult = await pool.query(queries.MATCH_ADMIN_LOGIN,
+      [email]
+    );
+
+    if (adminResult.rows.length === 0) {
+      return res.status(400).json({ error: 'Admin not found.' });
+    }
+
+    const admin = adminResult.rows[0];
+
+    // Since no hashing yet, simple password match
+    if (admin.password_hash !== password) {
+      return res.status(400).json({ error: 'Incorrect password.' });
+    }
+
+    res.json({ message: 'Admin login successful!', adminId: admin.user_id });
+
+  } catch (err) {
+    console.error('Admin login error:', err);
+    res.status(500).json({ error: 'Failed to login as admin.' });
+  }
+});
+
+
 router.get('/all', async (req, res) => {
   try {
     const result = await pool.query('SELECT * FROM users WHERE role = $1', ['student']);

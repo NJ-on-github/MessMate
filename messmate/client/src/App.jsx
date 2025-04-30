@@ -1,3 +1,6 @@
+//import landing page
+import Landing_page from './components/common/landing_page.jsx'
+
 // import './App.css'
 import React, { useState, useEffect } from 'react'
 import Student_login_card from './components/student/student_login_card.jsx'
@@ -10,12 +13,46 @@ import All from './components/admin/all.jsx'
 import Monthly_fees from './components/admin/monthly_fees.jsx'
 
 //admin
+import Admin_login from './components/admin/admin_login.jsx'
 import Menu from './components/admin/menu.jsx'
+
 
 //importing css
 import './common.css'
 import './components/common/table.css'
 
+//student
+import Student_register from './components/student/student_register.jsx'
+import Student_sidebar_temp from './components/student/student_sidebar_temp.jsx'
+import Navbar_basic from './components/student/navbar_basic.jsx'
+
+import { createBrowserRouter, RouterProvider } from 'react-router-dom'
+
+const router = createBrowserRouter([
+  {
+    path: "/",
+    element: <Landing_page/>,
+  },
+  {
+    path: "/test",
+    element: <Navbar_basic/>,
+  },
+  {
+    path: "/admin",
+    element: <>
+    {/* <Admin_sidebar/> */}
+    <All_student_list/>
+    </>
+  },
+  {
+    path: "/admin/login",
+    element: <Admin_login/>,
+  },
+  {
+    path: "/admin/dashboard",
+    element: <All_student_list/>,
+  }
+]);
 
 function App() {
 
@@ -32,6 +69,10 @@ function App() {
 
   return (
     <>
+    <RouterProvider router={router} />
+    {/* <Student_sidebar_temp/> */}
+    {/* <Navbar_Basic/> */}
+      
       <h1>App</h1>
       {/* <h3>{res}</h3> */}
       {/*   
@@ -47,6 +88,8 @@ function App() {
       <All/>
       <Monthly_fees/>
       <Menu/>
+      <Student_register/>
+
 
       {/* const result=  */}
 
