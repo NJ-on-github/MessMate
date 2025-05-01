@@ -18,6 +18,7 @@ const student_login_card = () => {
                 </div>
                 <button className='primary-btn' type="submit">Log In</button>
             </form>
+            <p className='student_login_card_small_text'>Don't have an account? <a href="/student/register">Register here</a></p>
         </div>
     )
 }

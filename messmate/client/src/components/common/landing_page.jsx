@@ -19,7 +19,7 @@ const landing_page = () => {
 
           <button 
             style={buttonStyle} 
-            onClick={() => navigate('/student-choose')}
+            onClick={() => navigate('/student/login')}
           >
             Student
           </button>

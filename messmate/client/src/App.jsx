@@ -13,6 +13,7 @@ import All from './components/admin/all.jsx'
 import Monthly_fees from './components/admin/monthly_fees.jsx'
 
 //admin
+import Admin_sidebar from './components/admin/sidebar.jsx'
 import Admin_login from './components/admin/admin_login.jsx'
 import Menu from './components/admin/menu.jsx'
 
@@ -31,26 +32,86 @@ import { createBrowserRouter, RouterProvider } from 'react-router-dom'
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <Landing_page/>,
+    element: <Landing_page />,
+  },
+  {
+    path: "/student/login",
+    element: <>
+      <Student_login_card />
+    </>
+  },
+  {
+    path: "/student/register",
+    element: <>
+      <Student_register />
+    </>
+  },
+  {
+    path: "/student/dashboard",
+    element: <>
+      <Navbar_basic />
+      <Student_sidebar_temp />
+      <Student_login_message message="Welcome to the Student Portal" description="Please log in to access your courses and materials." />
+      <Student_registration_card />
+      </>
   },
   {
     path: "/test",
-    element: <Navbar_basic/>,
+    element: <Navbar_basic />,
   },
   {
     path: "/admin",
     element: <>
-    {/* <Admin_sidebar/> */}
-    <All_student_list/>
+      {/* <Admin_sidebar/> */}
+      <All_student_list />
     </>
   },
   {
     path: "/admin/login",
-    element: <Admin_login/>,
+    element: <Admin_login />,
   },
   {
     path: "/admin/dashboard",
-    element: <All_student_list/>,
+    element: <div>
+      <Admin_sidebar />
+      <All_student_list />
+      <Menu />
+    </div>
+  },
+  {
+    path: "/admin/pending-payments",
+    element: <div>
+      <Admin_sidebar />
+      <PendingPaymentsList />,
+    </div>
+  },
+  {
+    path: "/admin/pending-approvals",
+    element: <div>
+      <Admin_sidebar />
+      <PendingApprovalsList />,
+    </div>
+  },
+  {
+    path: "/admin/defaulters",
+    element: <div>
+      <Admin_sidebar />
+      <All_student_list />
+    </div>
+  },
+  {
+    path: "/admin/monthly-fees",
+    element: <div>
+      <Admin_sidebar />
+      <Monthly_fees />
+    </div>
+  },
+  {
+    path: "/admin/Todays-menu",
+    element: <div>
+      <Admin_sidebar />
+      <Menu />
+    </div>
   }
 ]);
 
@@ -69,10 +130,10 @@ function App() {
 
   return (
     <>
-    <RouterProvider router={router} />
-    {/* <Student_sidebar_temp/> */}
-    {/* <Navbar_Basic/> */}
-      
+      <RouterProvider router={router} />
+      {/* <Student_sidebar_temp/> */}
+      {/* <Navbar_Basic/> */}
+
       <h1>App</h1>
       {/* <h3>{res}</h3> */}
       {/*   
@@ -81,14 +142,14 @@ function App() {
       <Student_login_card/>
       <Student_login_message message="Welcome to the Student Portal" description="Please log in to access your courses and materials."/> */}
 
-     
-      <All_student_list/>
-      <PendingPaymentsList/>
-      <PendingApprovalsList/>
-      <All/>
-      <Monthly_fees/>
-      <Menu/>
-      <Student_register/>
+
+      <All_student_list />
+      <PendingPaymentsList />
+      <PendingApprovalsList />
+      <All />
+      <Monthly_fees />
+      <Menu />
+      <Student_register />
 
 
       {/* const result=  */}
