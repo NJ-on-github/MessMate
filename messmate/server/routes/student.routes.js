@@ -99,5 +99,72 @@ router.get('/todays-menu', async (req, res) => {
     }
 });
 
+router.post('/login', async (req, res) => {
+    const { email, password } = req.body;
+  
+    try {
+      // 1. Find user
+      const userResult = await pool.query(
+        queries.LOGIN_FIND_USER,
+        [email]
+      );
+  
+      if (userResult.rows.length === 0) {
+        return res.status(400).json({ error: 'Student not found.' });
+      }
+  
+      const user = userResult.rows[0];
+  
+      // 2. Check password (simple match for now)
+      if (user.password_hash !== password) {
+        return res.status(400).json({ error: 'Incorrect password.' });
+      }
+  
+      // 3. Get student ID and registration status
+      const studentResult = await pool.query(
+        queries.LOGIN_FIND_STUDENT_BY_USER_ID,
+        [user.user_id]
+      );
+  
+      if (studentResult.rows.length === 0) {
+        return res.status(400).json({ error: 'Student record not found.' });
+      }
+  
+      const student = studentResult.rows[0];
+  
+      // 4. Check registration status
+      if (student.registration_status === 'pending') {
+        return res.status(403).json({ error: "pending", registration_status: "pending" });
+      }
+  
+      // 5. Check if blocked
+      const statusResult = await pool.query(
+        queries.LOGIN_CHECK_ACCOUNT_BLOCK,
+        [student.student_id]
+      );
+  
+      const { is_blocked } = statusResult.rows[0];
+  
+      if (is_blocked) {
+        return res.status(403).json({ error: "blocked",
+        registration_status: "blocked",
+        message: "Your account is blocked. Please contact the admin."
+         });
+      }
+  
+      // ✅ Login success: return minimal info
+      res.json({
+        message: 'Login successful!',
+        studentId: student.student_id,
+        name: user.name,
+        email: user.email
+      });
+  
+    } catch (err) {
+      console.error('Login error:', err);
+      res.status(500).json({ error: 'Something went wrong. Please try again.' });
+    }
+  });
+
 
 module.exports = router;

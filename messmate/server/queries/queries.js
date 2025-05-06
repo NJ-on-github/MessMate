@@ -30,6 +30,24 @@ const GET_STUDENT_PAYMENTS = `
   ORDER BY due_date ASC;
 `;
 
+//login
+const LOGIN_FIND_USER = `
+  SELECT * FROM users
+  WHERE email = $1 AND role = 'student';
+`;
+
+const LOGIN_FIND_STUDENT_BY_USER_ID = `
+  SELECT student_id, registration_status
+  FROM students
+  WHERE user_id = $1;
+`;
+
+const LOGIN_CHECK_ACCOUNT_BLOCK = `
+  SELECT is_blocked
+  FROM account_status
+  WHERE student_id = $1;
+`;
+
 // Student - Get current month's pending status (for dashboard alert)
 const CHECK_CURRENT_MONTH_PAYMENT = `
   SELECT payment_status
@@ -72,6 +90,72 @@ const APPROVE_REGISTRATION = `
 UPDATE students SET registration_status = 'approved' WHERE student_id = $1;
 `;
 
+// Query to initialize payments for a student
+const INITIALIZE_STUDENT_PAYMENTS = `
+  WITH months AS (
+    SELECT 
+      generate_series(
+        date_trunc('month', CURRENT_DATE),
+        date_trunc('month', CURRENT_DATE) + interval '2 months',
+        interval '1 month'
+      ) AS month_date
+  ),
+  applicable_fees AS (
+    SELECT 
+      m.month_date,
+      f.fee_id,
+      f.monthly_fee,
+      f.effective_from
+    FROM months m
+    CROSS JOIN LATERAL (
+      SELECT fee_id, monthly_fee, effective_from
+      FROM fees_structure
+      WHERE effective_from <= (m.month_date + interval '1 month - 1 day')
+      ORDER BY effective_from DESC
+      LIMIT 1
+    ) f
+  )
+  INSERT INTO payments (
+    student_id, 
+    fee_id, 
+    amount, 
+    payment_status, 
+    due_date, 
+    month_year
+  )
+  SELECT 
+    $1 AS student_id, 
+    af.fee_id, 
+    af.monthly_fee AS amount, 
+    'pending' AS payment_status, 
+    af.month_date + interval '10 days' AS due_date,
+    to_char(af.month_date, 'MM/YYYY') AS month_year
+  FROM applicable_fees af
+  WHERE NOT EXISTS (
+    SELECT 1 FROM payments 
+    WHERE student_id = $1 
+    AND month_year = to_char(af.month_date, 'MM/YYYY')
+  )`;
+
+// const INITIALIZE_STUDENT_PAYMENTS = `
+//   INSERT INTO payments (student_id, fee_id, amount, payment_status, month_year)
+// SELECT 
+//   $1,
+//   f.fee_id,
+//   f.amount,
+//   'unpaid',
+//   f.month_year
+// FROM fees f
+// WHERE NOT EXISTS (
+//   SELECT 1 FROM payments p
+//   WHERE p.student_id = $1 AND p.month_year = f.month_year
+// )
+// `;
+
+const temp = `INSERT INTO payments (student_id, fee_id, amount, payment_status, payment_date, due_date, month_year)
+VALUES ($1, 1, 5000.00, 'pending', NULL, '2025-03-10', '2025-03')`;
+
+
 const REJECT_REGISTRATION = `
   UPDATE students SET registration_status = 'rejected' WHERE student_id = $1;`;
 
@@ -110,8 +194,33 @@ const GET_ALL_FEES = `
   SELECT * FROM fees_structure ORDER BY effective_from DESC;
 `;
 
-const GET_ALL_FEES_BY_MONTH = `
+const GET_SET_FEES_BY_MONTH = `
   SELECT * FROM fees_structure WHERE effective_from = $1;
+  `;
+
+ const createPaymentsForNewFee = `
+    INSERT INTO payments (
+        student_id,
+        fee_id,
+        amount,
+        payment_status,
+        payment_date,
+        due_date,
+        month_year
+    )
+    SELECT 
+        s.student_id,
+        $1,  -- fee_id
+        $2,  -- monthly_fee
+        'pending',
+        NULL,
+        ($3::date + INTERVAL '10 days')::date,  -- Fixed: Cast to date explicitly
+        to_char($3::date, 'MM-YYYY')    -- month_year
+    FROM 
+        students s
+    WHERE 
+        s.registration_status = 'approved'
+    RETURNING *;
   `;
 
 // ✅ Payments
@@ -207,14 +316,19 @@ const GET_TODAYS_DINNER = `
 
 
 module.exports = {
+  createPaymentsForNewFee,
     MATCH_ADMIN_LOGIN,
     INSERT_USER,
     INSERT_STUDENT,
     INSERT_ACCOUNT_STATUS,
+    LOGIN_FIND_USER,
+    LOGIN_FIND_STUDENT_BY_USER_ID,
+    LOGIN_CHECK_ACCOUNT_BLOCK,
     COUNT_PENDING_REGISTRATIONS,
     COUNT_PENDING_PAYMENTS_THIS_MONTH,
     GET_ALL_STUDENTS,
     APPROVE_REGISTRATION,
+    INITIALIZE_STUDENT_PAYMENTS,
     REJECT_REGISTRATION,
     BLOCK_STUDENT,
     UNBLOCK_STUDENT,
@@ -222,7 +336,7 @@ module.exports = {
     GET_PENDING_PAYMENTS_BY_MONTH,
     INSERT_FEE,
     GET_ALL_FEES,
-    GET_ALL_FEES_BY_MONTH,
+    GET_SET_FEES_BY_MONTH,
     GET_ALL_PAYMENTS,
     GET_PENDING_PAYMENTS,
     INSERT_TODAYS_MENU,

@@ -56,15 +56,51 @@ router.get('/students', async (req, res) => {
 
 // admin
 router.patch('/approve-registration/:id', async (req, res) => {
+  const client = await pool.connect();
+  
   try {
-    await pool.query(queries.APPROVE_REGISTRATION,
-      [req.params.id]
-    );
-    res.json({ message: "Student approved." });
+    // Start transaction
+    await client.query('BEGIN');
+    
+    // Set status to approved
+    await client.query(queries.APPROVE_REGISTRATION, [req.params.id]);
+    
+    // Initialize payment rows for all fee months if not already inserted
+    await client.query(queries.INITIALIZE_STUDENT_PAYMENTS, [req.params.id]);
+    
+    // Commit transaction if all operations succeed
+    await client.query('COMMIT');
+    
+    res.status(200).json({ message: 'Student approved and payments initialized.' });
   } catch (err) {
-    res.status(500).json({ error: 'Approval failed.' });
+    // Rollback transaction if any operation fails
+    await client.query('ROLLBACK');
+    
+    console.error('Approval error:', err);
+    res.status(500).json({ error: 'Failed to approve student.' });
+  } finally {
+    // Release the client back to the pool
+    client.release();
   }
 });
+// router.patch('/approve-registration/:id', async (req, res) => {
+//   try {
+//     //set status to approved
+//     await pool.query(queries.APPROVE_REGISTRATION,
+//       [req.params.id]
+//     );
+    
+//     // 2. Insert payment rows for all fee months if not already inserted
+//     await pool.query(queries.INITIALIZE_STUDENT_PAYMENTS,
+//       [req.params.id]
+//     );
+
+//     res.status(200).json({ message: 'Student approved and payments initialized.' });
+//   } catch (err) {
+//     console.error('Approval error:', err);
+//     res.status(500).json({ error: 'Failed to approve student.' });
+//   }
+// });
 
 router.patch('/reject-registration/:id', async (req, res) => {
   try {
@@ -110,19 +146,65 @@ router.get('/fees', async (req, res) => {
 });
 
 
+// router.post('/insert-fee', async (req, res) => {
+//   const { monthly_fee, effective_from } = req.body;
+//   try {
+//     const existing = await pool.query(queries.GET_SET_FEES_BY_MONTH, [effective_from]);
+//     if (existing.rows.length > 0) {
+//       return res.status(400).json({ error: 'Fee for this month already set' });
+//     }
+
+//     await pool.query(queries.INSERT_FEE, [monthly_fee, effective_from]);
+//     res.json({ message: 'Fee added successfully.' });
+//   } catch (err) {
+//     console.error(err);
+//     res.status(500).json({ error: 'Failed to insert fee.' });
+//   }
+// });
+
 router.post('/insert-fee', async (req, res) => {
   const { monthly_fee, effective_from } = req.body;
+  const client = await pool.connect();
+  
   try {
-    const existing = await pool.query(queries.GET_ALL_FEES_BY_MONTH, [effective_from]);
-    if (existing.rows.length > 0) {
-      return res.status(400).json({ error: 'Fee for this month already set' });
+    // Begin transaction
+    await client.query('BEGIN');
+    
+    // Insert new fee structure
+    const feeResult = await client.query(
+      'INSERT INTO fees_structure (monthly_fee, effective_from) VALUES ($1, $2) RETURNING *',
+      [monthly_fee, effective_from]
+    );
+    
+    const newFee = feeResult.rows[0];
+    
+    // If the fee is for current month or future, create pending payments
+    if (new Date(effective_from) >= new Date(new Date().setDate(1))) {
+      await client.query(
+        queries.createPaymentsForNewFee,
+        [newFee.fee_id, newFee.monthly_fee, newFee.effective_from]
+      );
     }
-
-    await pool.query(queries.INSERT_FEE, [monthly_fee, effective_from]);
-    res.json({ message: 'Fee added successfully.' });
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: 'Failed to insert fee.' });
+    
+    // Commit transaction
+    await client.query('COMMIT');
+    
+    res.status(201).json({
+      success: true,
+      message: 'Fee structure added and payments created',
+      fee: newFee
+    });
+  } catch (error) {
+    // Rollback in case of error
+    await client.query('ROLLBACK');
+    
+    res.status(500).json({
+      success: false,
+      message: 'Failed to add fee structure',
+      error: error.message
+    });
+  } finally {
+    client.release();
   }
 });
 
@@ -299,5 +381,121 @@ router.post('/menu/save-todays-menu', async (req, res) => {
   }
 });
 
+
+router.get('/student-search', async (req, res) => {
+  console.log('Search endpoint hit with query params:', req.query);
+  const { type, query } = req.query;
+  
+  if (!type || !query) {
+    console.log('Missing parameters');
+    return res.status(400).json({ error: 'Type and query parameters are required' });
+  }
+  
+  try {
+    let searchQuery;
+    
+    if (type === 'name') {
+      searchQuery = `
+        SELECT s.student_id, u.name, u.email, s.hostel_name, s.branch, s.registration_status
+        FROM students s
+        JOIN users u ON s.user_id = u.user_id
+        WHERE u.name ILIKE $1
+        ORDER BY u.name
+      `;
+    } else if (type === 'email') {
+      searchQuery = `
+        SELECT s.student_id, u.name, u.email, s.hostel_name, s.branch, s.registration_status
+        FROM students s
+        JOIN users u ON s.user_id = u.user_id
+        WHERE u.email ILIKE $1
+        ORDER BY u.name
+      `;
+    } else {
+      console.log('Invalid search type:', type);
+      return res.status(400).json({ error: 'Invalid search type' });
+    }
+    
+    console.log('Executing query with param:', `%${query}%`);
+    const result = await pool.query(searchQuery, [`%${query}%`]);
+    console.log('Query result rows:', result.rows.length);
+    
+    // Set appropriate headers
+    res.setHeader('Content-Type', 'application/json');
+    res.json(result.rows);
+  } catch (err) {
+    console.error('Student search error:', err);
+    res.status(500).json({ error: `An error occurred while searching for students: ${err.message}` });
+  }
+});
+
+router.get('/student-get_payment/:studentId', async (req, res) => {
+  const { studentId } = req.params;
+  
+  try {
+    const query = `
+      SELECT 
+        p.payment_id,
+        p.student_id,
+        p.fee_id,
+        p.amount,
+        p.payment_status,
+        p.payment_date,
+        p.due_date,
+        p.month_year
+      FROM payments p
+      WHERE p.student_id = $1
+      ORDER BY 
+        CASE
+          WHEN p.month_year ~ '^\\d{2}/\\d{4}$' THEN 
+            to_date(p.month_year, 'MM/YYYY')
+          ELSE NULL
+        END ASC
+    `;
+    
+    const result = await pool.query(query, [studentId]);
+    res.json(result.rows);
+  } catch (err) {
+    console.error('Get student payments error:', err);
+    res.status(500).json({ error: 'An error occurred while retrieving student payments' });
+  }
+});
+
+router.patch('student-update_payment/:paymentId', async (req, res) => {
+  const { paymentId } = req.params;
+  const { payment_date, payment_status } = req.body;
+  
+  if (!payment_date) {
+    return res.status(400).json({ error: 'Payment date is required' });
+  }
+  
+  const client = await pool.connect();
+  
+  try {
+    await client.query('BEGIN');
+    
+    const query = `
+      UPDATE payments
+      SET payment_date = $1, payment_status = $2
+      WHERE payment_id = $3
+      RETURNING *
+    `;
+    
+    const result = await client.query(query, [payment_date, payment_status, paymentId]);
+    
+    if (result.rows.length === 0) {
+      await client.query('ROLLBACK');
+      return res.status(404).json({ error: 'Payment not found' });
+    }
+    
+    await client.query('COMMIT');
+    res.json(result.rows[0]);
+  } catch (err) {
+    await client.query('ROLLBACK');
+    console.error('Update payment error:', err);
+    res.status(500).json({ error: 'An error occurred while updating the payment' });
+  } finally {
+    client.release();
+  }
+});
 
 module.exports = router;

@@ -16,7 +16,7 @@ import Monthly_fees from './components/admin/monthly_fees.jsx'
 import Admin_sidebar from './components/admin/sidebar.jsx'
 import Admin_login from './components/admin/admin_login.jsx'
 import Menu from './components/admin/menu.jsx'
-
+import StudentPaymentManager from './components/admin/student_payment_manager.jsx'
 
 //importing css
 import './common.css'
@@ -26,6 +26,8 @@ import './components/common/table.css'
 import Student_register from './components/student/student_register.jsx'
 import Student_sidebar_temp from './components/student/student_sidebar_temp.jsx'
 import Navbar_basic from './components/student/navbar_basic.jsx'
+import Student_payments from './components/student/student_payments.jsx'
+import Test from './components/student/test.jsx'
 
 import { createBrowserRouter, RouterProvider } from 'react-router-dom'
 
@@ -47,12 +49,20 @@ const router = createBrowserRouter([
     </>
   },
   {
-    path: "/student/dashboard",
+    path: "/student/dashboard/:studentId",
     element: <>
+      <Test />
       <Navbar_basic />
-      <Student_sidebar_temp />
+      {/* <Student_sidebar_temp /> */}
       <Student_login_message message="Welcome to the Student Portal" description="Please log in to access your courses and materials." />
       <Student_registration_card />
+    </>
+  },
+  {
+    path: "/student/payments/:studentId",
+    element: <>
+      <Navbar_basic />
+      <Student_payments />
       </>
   },
   {
@@ -104,6 +114,13 @@ const router = createBrowserRouter([
     element: <div>
       <Admin_sidebar />
       <Monthly_fees />
+    </div>
+  },
+  {
+    path: "/admin/payments",
+    element: <div>
+      <Admin_sidebar />
+      <StudentPaymentManager />
     </div>
   },
   {
