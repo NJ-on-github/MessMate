@@ -382,120 +382,175 @@ router.post('/menu/save-todays-menu', async (req, res) => {
 });
 
 
-router.get('/student-search', async (req, res) => {
-  console.log('Search endpoint hit with query params:', req.query);
-  const { type, query } = req.query;
+// router.get('/student-search', async (req, res) => {
+//   console.log('Search endpoint hit with query params:', req.query);
+//   const { type, query } = req.query;
   
-  if (!type || !query) {
-    console.log('Missing parameters');
-    return res.status(400).json({ error: 'Type and query parameters are required' });
-  }
+//   if (!type || !query) {
+//     console.log('Missing parameters');
+//     return res.status(400).json({ error: 'Type and query parameters are required' });
+//   }
   
+//   try {
+//     let searchQuery;
+    
+//     if (type === 'name') {
+//       searchQuery = `
+//         SELECT s.student_id, u.name, u.email, s.hostel_name, s.branch, s.registration_status
+//         FROM students s
+//         JOIN users u ON s.user_id = u.user_id
+//         WHERE u.name ILIKE $1
+//         ORDER BY u.name
+//       `;
+//     } else if (type === 'email') {
+//       searchQuery = `
+//         SELECT s.student_id, u.name, u.email, s.hostel_name, s.branch, s.registration_status
+//         FROM students s
+//         JOIN users u ON s.user_id = u.user_id
+//         WHERE u.email ILIKE $1
+//         ORDER BY u.name
+//       `;
+//     } else {
+//       console.log('Invalid search type:', type);
+//       return res.status(400).json({ error: 'Invalid search type' });
+//     }
+    
+//     console.log('Executing query with param:', `%${query}%`);
+//     const result = await pool.query(searchQuery, [`%${query}%`]);
+//     console.log('Query result rows:', result.rows.length);
+    
+//     // Set appropriate headers
+//     res.setHeader('Content-Type', 'application/json');
+//     res.json(result.rows);
+//   } catch (err) {
+//     console.error('Student search error:', err);
+//     res.status(500).json({ error: `An error occurred while searching for students: ${err.message}` });
+//   }
+// });
+
+// router.get('/student-get_payment/:studentId', async (req, res) => {
+//   const { studentId } = req.params;
+  
+//   try {
+//     const query = `
+//       SELECT 
+//         p.payment_id,
+//         p.student_id,
+//         p.fee_id,
+//         p.amount,
+//         p.payment_status,
+//         p.payment_date,
+//         p.due_date,
+//         p.month_year
+//       FROM payments p
+//       WHERE p.student_id = $1
+//       ORDER BY 
+//         CASE
+//           WHEN p.month_year ~ '^\\d{2}/\\d{4}$' THEN 
+//             to_date(p.month_year, 'MM/YYYY')
+//           ELSE NULL
+//         END ASC
+//     `;
+    
+//     const result = await pool.query(query, [studentId]);
+//     res.json(result.rows);
+//   } catch (err) {
+//     console.error('Get student payments error:', err);
+//     res.status(500).json({ error: 'An error occurred while retrieving student payments' });
+//   }
+// });
+
+// router.patch('student-update_payment/:paymentId', async (req, res) => {
+//   const { paymentId } = req.params;
+//   const { payment_date, payment_status } = req.body;
+  
+//   if (!payment_date) {
+//     return res.status(400).json({ error: 'Payment date is required' });
+//   }
+  
+//   const client = await pool.connect();
+  
+//   try {
+//     await client.query('BEGIN');
+    
+//     const query = `
+//       UPDATE payments
+//       SET payment_date = $1, payment_status = $2
+//       WHERE payment_id = $3
+//       RETURNING *
+//     `;
+    
+//     const result = await client.query(query, [payment_date, payment_status, paymentId]);
+    
+//     if (result.rows.length === 0) {
+//       await client.query('ROLLBACK');
+//       return res.status(404).json({ error: 'Payment not found' });
+//     }
+    
+//     await client.query('COMMIT');
+//     res.json(result.rows[0]);
+//   } catch (err) {
+//     await client.query('ROLLBACK');
+//     console.error('Update payment error:', err);
+//     res.status(500).json({ error: 'An error occurred while updating the payment' });
+//   } finally {
+//     client.release();
+//   }
+// });
+
+
+router.get('/payments/search', async (req, res) => {
+  const { query } = req.query;
+  if (!query) return res.status(400).json({ error: 'Query is required' });
+
   try {
-    let searchQuery;
-    
-    if (type === 'name') {
-      searchQuery = `
-        SELECT s.student_id, u.name, u.email, s.hostel_name, s.branch, s.registration_status
-        FROM students s
-        JOIN users u ON s.user_id = u.user_id
-        WHERE u.name ILIKE $1
-        ORDER BY u.name
-      `;
-    } else if (type === 'email') {
-      searchQuery = `
-        SELECT s.student_id, u.name, u.email, s.hostel_name, s.branch, s.registration_status
-        FROM students s
-        JOIN users u ON s.user_id = u.user_id
-        WHERE u.email ILIKE $1
-        ORDER BY u.name
-      `;
-    } else {
-      console.log('Invalid search type:', type);
-      return res.status(400).json({ error: 'Invalid search type' });
-    }
-    
-    console.log('Executing query with param:', `%${query}%`);
-    const result = await pool.query(searchQuery, [`%${query}%`]);
-    console.log('Query result rows:', result.rows.length);
-    
-    // Set appropriate headers
-    res.setHeader('Content-Type', 'application/json');
+    const result = await pool.query(
+      `SELECT p.payment_id, p.month_year, p.amount, p.payment_status, p.payment_date,
+              u.name, u.email
+       FROM payments p
+       JOIN students s ON p.student_id = s.student_id
+       JOIN users u ON s.user_id = u.user_id
+       WHERE u.name ILIKE $1 OR u.email ILIKE $1
+       ORDER BY p.month_year`,
+      [`%${query}%`]
+    );
+
     res.json(result.rows);
   } catch (err) {
-    console.error('Student search error:', err);
-    res.status(500).json({ error: `An error occurred while searching for students: ${err.message}` });
+    console.error('Error searching payments:', err.message);
+    res.status(500).json({ error: 'Internal Server Error' });
   }
 });
 
-router.get('/student-get_payment/:studentId', async (req, res) => {
-  const { studentId } = req.params;
-  
-  try {
-    const query = `
-      SELECT 
-        p.payment_id,
-        p.student_id,
-        p.fee_id,
-        p.amount,
-        p.payment_status,
-        p.payment_date,
-        p.due_date,
-        p.month_year
-      FROM payments p
-      WHERE p.student_id = $1
-      ORDER BY 
-        CASE
-          WHEN p.month_year ~ '^\\d{2}/\\d{4}$' THEN 
-            to_date(p.month_year, 'MM/YYYY')
-          ELSE NULL
-        END ASC
-    `;
-    
-    const result = await pool.query(query, [studentId]);
-    res.json(result.rows);
-  } catch (err) {
-    console.error('Get student payments error:', err);
-    res.status(500).json({ error: 'An error occurred while retrieving student payments' });
-  }
-});
 
-router.patch('student-update_payment/:paymentId', async (req, res) => {
-  const { paymentId } = req.params;
-  const { payment_date, payment_status } = req.body;
-  
-  if (!payment_date) {
-    return res.status(400).json({ error: 'Payment date is required' });
+router.patch('/payments/:payment_id', async (req, res) => {
+  const { payment_id } = req.params;
+  const { payment_status } = req.body;
+
+  if (!['paid', 'pending'].includes(payment_status)) {
+    return res.status(400).json({ error: 'Invalid payment status' });
   }
-  
-  const client = await pool.connect();
-  
+
   try {
-    await client.query('BEGIN');
-    
-    const query = `
-      UPDATE payments
-      SET payment_date = $1, payment_status = $2
-      WHERE payment_id = $3
-      RETURNING *
-    `;
-    
-    const result = await client.query(query, [payment_date, payment_status, paymentId]);
-    
-    if (result.rows.length === 0) {
-      await client.query('ROLLBACK');
+    const result = await pool.query(
+      `UPDATE payments
+       SET payment_status = $1,
+           payment_date = CASE WHEN $2 = 'paid' THEN CURRENT_DATE ELSE NULL END
+       WHERE payment_id = $3
+       RETURNING *`,
+      [payment_status,payment_status, payment_id]
+    );
+
+    if (result.rowCount === 0) {
       return res.status(404).json({ error: 'Payment not found' });
     }
-    
-    await client.query('COMMIT');
-    res.json(result.rows[0]);
+
+    res.json({ message: 'Payment updated successfully', payment: result.rows[0] });
   } catch (err) {
-    await client.query('ROLLBACK');
-    console.error('Update payment error:', err);
-    res.status(500).json({ error: 'An error occurred while updating the payment' });
-  } finally {
-    client.release();
+    console.error('Error updating payment:', err.message);
+    res.status(500).json({ error: 'Internal Server Error' });
   }
 });
+
 
 module.exports = router;
