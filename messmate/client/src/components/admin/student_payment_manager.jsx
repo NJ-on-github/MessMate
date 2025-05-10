@@ -26,12 +26,19 @@ const student_payment_manager = () => {
         body: JSON.stringify({ payment_status: 'paid' })
       });
 
-      if (res.ok) {
-        // Update payment status in UI
-        setResults(prev =>
-          prev.map(p => p.payment_id === paymentId ? { ...p, payment_status: 'paid' } : p)
-        );
+      if (!res.ok) {
+        throw new Error('Failed to update payment');
       }
+
+      const data = await res.json();
+      console.log('Payment update response:', data);
+
+      // Update UI after successful payment
+      setResults(prev =>
+        prev.map(p => p.payment_id === paymentId ? 
+          { ...p, payment_status: 'paid', payment_date: new Date().toISOString() } : p
+        )
+      );
     } catch (err) {
       console.error('Failed to update payment:', err);
     }
@@ -48,7 +55,10 @@ const student_payment_manager = () => {
           value={query}
           onChange={(e) => setQuery(e.target.value)}
         />
-        <button onClick={searchPayments} className="bg-blue-600 text-white px-4 py-1 rounded">
+        <button 
+          onClick={searchPayments} 
+          className="bg-blue-600 text-white px-4 py-1 rounded"
+        >
           {loading ? 'Searching...' : 'Search'}
         </button>
       </div>
@@ -61,7 +71,8 @@ const student_payment_manager = () => {
               <p><strong>Email:</strong> {payment.email}</p>
               <p><strong>Month:</strong> {payment.month_year}</p>
               <p><strong>Amount:</strong> ₹{payment.amount}</p>
-              <p><strong>Status:</strong> 
+              <p>
+                <strong>Status:</strong> 
                 <span className={`ml-1 font-semibold ${payment.payment_status === 'paid' ? 'text-green-600' : 'text-red-500'}`}>
                   {payment.payment_status}
                 </span>

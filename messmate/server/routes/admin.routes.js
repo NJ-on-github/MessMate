@@ -567,7 +567,7 @@ router.get('/payments/month', async (req, res) => {
 });
 
 // Get all payments for a specific student
-router.get('/update-payments/payments/search', async (req, res) => {
+router.get('/payments/update-payments/search', async (req, res) => {
   const { query } = req.query;
   if (!query) return res.status(400).json({ error: 'Query is required' });
 
@@ -591,7 +591,7 @@ router.get('/update-payments/payments/search', async (req, res) => {
 });
 
 // Set payment status for a specific payment of a student
-router.patch('/update-payments/payments/:payment_id', async (req, res) => {
+router.patch('/payments/update-payments/:payment_id', async (req, res) => {
   const { payment_id } = req.params;
   const { payment_status } = req.body;
 
