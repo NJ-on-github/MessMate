@@ -31,6 +31,9 @@ import Test from './components/student/test.jsx'
 
 import { createBrowserRouter, RouterProvider } from 'react-router-dom'
 
+import OverlaySidebar from './components/admin/OverlaySidebar.jsx'
+import PushContentSidebar from './components/admin/PushContentSidebar.jsx'
+
 const router = createBrowserRouter([
   {
     path: "/",
@@ -63,7 +66,7 @@ const router = createBrowserRouter([
     element: <>
       <Navbar_basic />
       <Student_payments />
-      </>
+    </>
   },
   {
     path: "/test",
@@ -74,6 +77,19 @@ const router = createBrowserRouter([
     element: <>
       {/* <Admin_sidebar/> */}
       <All_student_list />
+    </>
+  },
+  {
+    path: "/admin/sidebar",
+    element: <>
+      {/* <Admin_sidebar /> */}
+      <OverlaySidebar />
+    </>
+  },
+  {
+    path: "/admin/push-sidebar",
+    element: <>
+      <PushContentSidebar />
     </>
   },
   {
@@ -89,38 +105,65 @@ const router = createBrowserRouter([
     </div>
   },
   {
-    path: "/admin/pending-payments",
+    path: "/admin/registrations",
     element: <div>
       <Admin_sidebar />
-      <PendingPaymentsList />,
     </div>
   },
   {
-    path: "/admin/pending-approvals",
+    path: "/admin/registrations/pending-approvals",
     element: <div>
       <Admin_sidebar />
       <PendingApprovalsList />,
     </div>
   },
   {
-    path: "/admin/defaulters",
+    path: "/admin/registrations/rejected-approvals",
+    element: <div>
+      <Admin_sidebar />
+      <PendingApprovalsList />,
+    </div>
+  },
+  {
+    path: "/admin/payments/pending-payments",
+    element: <div>
+      <Admin_sidebar />
+      <PendingPaymentsList />,
+    </div>
+  },
+  {
+    path: "/admin/payments/update-payments",
+    element: <div>
+      <Admin_sidebar />
+      <StudentPaymentManager />
+    </div>
+  },
+  {
+    path: "/admin/payments/defaulters",
     element: <div>
       <Admin_sidebar />
       <All_student_list />
     </div>
   },
   {
+    path: "/admin/students/all-students",
+    element: <>
+      <Admin_sidebar />
+      <All_student_list />
+    </>
+  },
+  {
+    path: "/admin/students/blocked-students",
+    element: <>
+      <Admin_sidebar />
+      <All_student_list />
+    </>
+  },
+  {
     path: "/admin/monthly-fees",
     element: <div>
       <Admin_sidebar />
       <Monthly_fees />
-    </div>
-  },
-  {
-    path: "/admin/payments",
-    element: <div>
-      <Admin_sidebar />
-      <StudentPaymentManager />
     </div>
   },
   {
@@ -148,19 +191,12 @@ function App() {
   return (
     <>
       <RouterProvider router={router} />
-      {/* <Student_sidebar_temp/> */}
-      {/* <Navbar_Basic/> */}
+      
 
       <h1>App</h1>
-      {/* <h3>{res}</h3> */}
-      {/*   
-      <Student_registration_card/>
-      <Student_login_card/>
-      <Student_login_card/>
-      <Student_login_message message="Welcome to the Student Portal" description="Please log in to access your courses and materials."/> */}
+     
 
 
-      <All_student_list />
       <PendingPaymentsList />
       <PendingApprovalsList />
       <All />
@@ -169,7 +205,6 @@ function App() {
       <Student_register />
 
 
-      {/* const result=  */}
 
     </>
   )

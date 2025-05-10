@@ -1,0 +1,24 @@
+Ramesh
+ramesh@gjalf.com
+password
+
+Test Student
+Teststudent@example.com
+samplepassword
+
+Test Student 3
+testStudent3@example.com
+abcd
+
+Test Student 4
+testStudent4@example.com
+abc
+
+Test Student 5
+teststudent5@example.com
+abcd
+
+// admin
+Admin User
+admin@example.com
+admin123

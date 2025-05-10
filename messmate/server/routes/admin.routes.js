@@ -43,7 +43,7 @@ router.get('/all', async (req, res) => {
   }
 });
 
-router.get('/students', async (req, res) => {
+router.get('/students/all-students', async (req, res) => {
   try {
     const result = await pool.query(queries.GET_ALL_STUDENTS);
     res.json(result.rows);
@@ -53,29 +53,50 @@ router.get('/students', async (req, res) => {
   }
 });
 
+router.get('/students/blocked-students', async (req, res) => {
+  try {
+    const result = await pool.query(queries.GET_BLOCKED_STUDENTS);
+    res.json(result.rows);
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).json({ error: 'Failed to fetch students.' });
+  }
+});
+
+router.patch('/students/unblock/:student_id', async (req, res) => {
+  const { student_id } = req.params;
+  try {
+    await pool.query(queries.UNBLOCK_STUDENT, [student_id]);
+    res.json({ message: 'Student unblocked successfully' });
+  } catch (err) {
+    console.error('Error unblocking student:', err.message);
+    res.status(500).json({ error: 'Failed to unblock student' });
+  }
+});
+
 
 // admin
 router.patch('/approve-registration/:id', async (req, res) => {
   const client = await pool.connect();
-  
+
   try {
     // Start transaction
     await client.query('BEGIN');
-    
+
     // Set status to approved
     await client.query(queries.APPROVE_REGISTRATION, [req.params.id]);
-    
+
     // Initialize payment rows for all fee months if not already inserted
     await client.query(queries.INITIALIZE_STUDENT_PAYMENTS, [req.params.id]);
-    
+
     // Commit transaction if all operations succeed
     await client.query('COMMIT');
-    
+
     res.status(200).json({ message: 'Student approved and payments initialized.' });
   } catch (err) {
     // Rollback transaction if any operation fails
     await client.query('ROLLBACK');
-    
+
     console.error('Approval error:', err);
     res.status(500).json({ error: 'Failed to approve student.' });
   } finally {
@@ -89,7 +110,7 @@ router.patch('/approve-registration/:id', async (req, res) => {
 //     await pool.query(queries.APPROVE_REGISTRATION,
 //       [req.params.id]
 //     );
-    
+
 //     // 2. Insert payment rows for all fee months if not already inserted
 //     await pool.query(queries.INITIALIZE_STUDENT_PAYMENTS,
 //       [req.params.id]
@@ -109,6 +130,7 @@ router.patch('/reject-registration/:id', async (req, res) => {
     );
     res.json({ message: "Registration rejected. successfully" });
   } catch (err) {
+    console.log(err.message)
     res.status(500).json({ error: 'Rejection failed.' });
   }
 });
@@ -165,19 +187,19 @@ router.get('/fees', async (req, res) => {
 router.post('/insert-fee', async (req, res) => {
   const { monthly_fee, effective_from } = req.body;
   const client = await pool.connect();
-  
+
   try {
     // Begin transaction
     await client.query('BEGIN');
-    
+
     // Insert new fee structure
     const feeResult = await client.query(
       'INSERT INTO fees_structure (monthly_fee, effective_from) VALUES ($1, $2) RETURNING *',
       [monthly_fee, effective_from]
     );
-    
+
     const newFee = feeResult.rows[0];
-    
+
     // If the fee is for current month or future, create pending payments
     if (new Date(effective_from) >= new Date(new Date().setDate(1))) {
       await client.query(
@@ -185,10 +207,10 @@ router.post('/insert-fee', async (req, res) => {
         [newFee.fee_id, newFee.monthly_fee, newFee.effective_from]
       );
     }
-    
+
     // Commit transaction
     await client.query('COMMIT');
-    
+
     res.status(201).json({
       success: true,
       message: 'Fee structure added and payments created',
@@ -197,7 +219,7 @@ router.post('/insert-fee', async (req, res) => {
   } catch (error) {
     // Rollback in case of error
     await client.query('ROLLBACK');
-    
+
     res.status(500).json({
       success: false,
       message: 'Failed to add fee structure',
@@ -209,14 +231,6 @@ router.post('/insert-fee', async (req, res) => {
 });
 
 
-router.get('/payments', async (req, res) => {
-  try {
-    const result = await pool.query(queries.GET_ALL_PAYMENTS);
-    res.json(result.rows);
-  } catch (err) {
-    res.status(500).json({ error: 'Payment fetch failed.' });
-  }
-});
 
 
 
@@ -229,27 +243,36 @@ router.get('/pending-approvals', async (req, res) => {
     res.status(500).json({ error: 'Failed to fetch pending registrations.' });
   }
 })
-
-
-router.get('/pending-payments/:monthYear', async (req, res) => {
-  const { monthYear } = req.params;
+router.get('/pending-approvals', async (req, res) => {
   try {
-    const result = await pool.query(queries.GET_PENDING_PAYMENTS_BY_MONTH, [monthYear]);
+    const result = await pool.query(queries.GET_PENDING_REGISTRATIONS);
     res.json(result.rows);
   } catch (err) {
-    res.status(500).json({ error: 'Failed to fetch pending payments.' });
+    res.status(500).json({ error: 'Failed to fetch pending registrations.' });
   }
-});
+})
 
-router.get('pending-payments/:month_year', async (req, res) => {
-  const { month_year } = req.params;
-  try {
-    const result = await pool.query(queries.GET_PENDING_PAYMENTS_BY_MONTH, [month_year]);
-    res.json(result.rows);
-  } catch (err) {
-    res.status(500).json({ error: 'Failed to fetch pending payments.' });
-  }
-});
+
+// router.get('/pending-payments/:monthYear', async (req, res) => {
+//   const { monthYear } = req.params;
+//   try {
+//     const result = await pool.query(queries.GET_PENDING_PAYMENTS_BY_MONTH, [monthYear]);
+//     res.json(result.rows);
+//   } catch (err) {
+//     console.log("error: " + err.message)
+//     res.status(500).json({ error: 'Failed to fetch pending payments.' });
+//   }
+// });
+
+// router.get('pending-payments/:month_year', async (req, res) => {
+//   const { month_year } = req.params;
+//   try {
+//     const result = await pool.query(queries.GET_PENDING_PAYMENTS_BY_MONTH, [month_year]);
+//     res.json(result.rows);
+//   } catch (err) {
+//     res.status(500).json({ error: 'Failed to fetch pending payments.' });
+//   }
+// });
 
 
 
@@ -335,8 +358,8 @@ router.post('/menu/save-todays-menu', async (req, res) => {
 
     // 0. Validate: At least one item should be selected
     if ((!breakfast || breakfast.length === 0) &&
-        (!lunch || lunch.length === 0) &&
-        (!dinner || dinner.length === 0)) {
+      (!lunch || lunch.length === 0) &&
+      (!dinner || dinner.length === 0)) {
       return res.status(400).json({ error: 'At least one menu item must be selected.' });
     }
 
@@ -385,15 +408,15 @@ router.post('/menu/save-todays-menu', async (req, res) => {
 // router.get('/student-search', async (req, res) => {
 //   console.log('Search endpoint hit with query params:', req.query);
 //   const { type, query } = req.query;
-  
+
 //   if (!type || !query) {
 //     console.log('Missing parameters');
 //     return res.status(400).json({ error: 'Type and query parameters are required' });
 //   }
-  
+
 //   try {
 //     let searchQuery;
-    
+
 //     if (type === 'name') {
 //       searchQuery = `
 //         SELECT s.student_id, u.name, u.email, s.hostel_name, s.branch, s.registration_status
@@ -414,11 +437,11 @@ router.post('/menu/save-todays-menu', async (req, res) => {
 //       console.log('Invalid search type:', type);
 //       return res.status(400).json({ error: 'Invalid search type' });
 //     }
-    
+
 //     console.log('Executing query with param:', `%${query}%`);
 //     const result = await pool.query(searchQuery, [`%${query}%`]);
 //     console.log('Query result rows:', result.rows.length);
-    
+
 //     // Set appropriate headers
 //     res.setHeader('Content-Type', 'application/json');
 //     res.json(result.rows);
@@ -430,7 +453,7 @@ router.post('/menu/save-todays-menu', async (req, res) => {
 
 // router.get('/student-get_payment/:studentId', async (req, res) => {
 //   const { studentId } = req.params;
-  
+
 //   try {
 //     const query = `
 //       SELECT 
@@ -451,7 +474,7 @@ router.post('/menu/save-todays-menu', async (req, res) => {
 //           ELSE NULL
 //         END ASC
 //     `;
-    
+
 //     const result = await pool.query(query, [studentId]);
 //     res.json(result.rows);
 //   } catch (err) {
@@ -463,30 +486,30 @@ router.post('/menu/save-todays-menu', async (req, res) => {
 // router.patch('student-update_payment/:paymentId', async (req, res) => {
 //   const { paymentId } = req.params;
 //   const { payment_date, payment_status } = req.body;
-  
+
 //   if (!payment_date) {
 //     return res.status(400).json({ error: 'Payment date is required' });
 //   }
-  
+
 //   const client = await pool.connect();
-  
+
 //   try {
 //     await client.query('BEGIN');
-    
+
 //     const query = `
 //       UPDATE payments
 //       SET payment_date = $1, payment_status = $2
 //       WHERE payment_id = $3
 //       RETURNING *
 //     `;
-    
+
 //     const result = await client.query(query, [payment_date, payment_status, paymentId]);
-    
+
 //     if (result.rows.length === 0) {
 //       await client.query('ROLLBACK');
 //       return res.status(404).json({ error: 'Payment not found' });
 //     }
-    
+
 //     await client.query('COMMIT');
 //     res.json(result.rows[0]);
 //   } catch (err) {
@@ -499,7 +522,52 @@ router.post('/menu/save-todays-menu', async (req, res) => {
 // });
 
 
-router.get('/payments/search', async (req, res) => {
+//PAYMENTS
+
+//get all the payments of all the students
+router.get('/payments', async (req, res) => {
+  try {
+    const result = await pool.query(queries.GET_ALL_PAYMENTS);
+    res.json(result.rows);
+  } catch (err) {
+    res.status(500).json({ error: 'Payment fetch failed.' });
+  }
+});
+
+// Get all payments for a specific month
+router.get('/payments/month', async (req, res) => {
+  const { month } = req.query;
+
+  if (!month) {
+    return res.status(400).json({ error: 'Month is required (e.g. 2024-05)' });
+  }
+
+  try {
+    const result = await pool.query(
+      `SELECT 
+        p.payment_id,
+        p.amount,
+        p.payment_status,
+        p.payment_date,
+        u.name,
+        u.email
+       FROM payments p
+       JOIN students s ON s.student_id = p.student_id
+       JOIN users u ON u.user_id = s.user_id
+       WHERE p.month_year = $1
+       ORDER BY u.name`,
+      [month]
+    );
+
+    res.json(result.rows);
+  } catch (err) {
+    console.error('Error fetching monthly payments:', err.message);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
+// Get all payments for a specific student
+router.get('/update-payments/payments/search', async (req, res) => {
   const { query } = req.query;
   if (!query) return res.status(400).json({ error: 'Query is required' });
 
@@ -522,8 +590,8 @@ router.get('/payments/search', async (req, res) => {
   }
 });
 
-
-router.patch('/payments/:payment_id', async (req, res) => {
+// Set payment status for a specific payment of a student
+router.patch('/update-payments/payments/:payment_id', async (req, res) => {
   const { payment_id } = req.params;
   const { payment_status } = req.body;
 
@@ -538,7 +606,7 @@ router.patch('/payments/:payment_id', async (req, res) => {
            payment_date = CASE WHEN $2 = 'paid' THEN CURRENT_DATE ELSE NULL END
        WHERE payment_id = $3
        RETURNING *`,
-      [payment_status,payment_status, payment_id]
+      [payment_status, payment_status, payment_id]
     );
 
     if (result.rowCount === 0) {

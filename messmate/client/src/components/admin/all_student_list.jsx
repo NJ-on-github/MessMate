@@ -13,7 +13,7 @@ const all_student_list = () => {
         const fetchStudents = async () => {
             console.log("Executing fetchStudents");
             try {
-                const response = await fetch('http://localhost:3000/admin/students');
+                const response = await fetch('http://localhost:3000/admin/students/all-students');
                 if (!response.ok) {
                     throw new Error('Failed to fetch students');
                 }

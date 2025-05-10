@@ -1,0 +1,129 @@
+/* Sidebar.css */
+
+/* Layout */
+.layout {
+    display: flex;
+    min-height: 100vh;
+  }
+  
+  /* Sidebar */
+  .sidebar {
+    position: fixed;
+    height: 100vh;
+    background-color: #1e293b;
+    color: white;
+    overflow: hidden;
+    transition: width 0.3s ease-in-out;
+    z-index: 10;
+  }
+  
+  .sidebar.collapsed {
+    width: 64px;
+  }
+  
+  .sidebar.expanded {
+    width: 240px;
+  }
+  
+  .sidebar-content {
+    padding: 16px;
+  }
+  
+  /* Menu header */
+  .menu-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 24px;
+  }
+  
+  .menu-icon {
+    min-width: 24px;
+    height: 24px;
+  }
+  
+  .menu-title {
+    margin-left: 12px;
+    font-size: 18px;
+    font-weight: 600;
+    transition: opacity 0.2s ease-in-out;
+  }
+  
+  .menu-title.hidden {
+    opacity: 0;
+  }
+  
+  .menu-title.visible {
+    opacity: 1;
+  }
+  
+  /* Menu items */
+  .menu-items ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+  }
+  
+  .menu-item {
+    display: flex;
+    align-items: center;
+    padding: 10px 0;
+    margin-bottom: 8px;
+    cursor: pointer;
+    border-radius: 4px;
+    transition: background-color 0.2s ease;
+  }
+  
+  .menu-item:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+  }
+  
+  .menu-item-icon {
+    min-width: 24px;
+    height: 24px;
+  }
+  
+  .menu-item-text {
+    margin-left: 12px;
+    white-space: nowrap;
+    transition: opacity 0.2s ease-in-out;
+  }
+  
+  .menu-item-text.hidden {
+    opacity: 0;
+  }
+  
+  .menu-item-text.visible {
+    opacity: 1;
+  }
+  
+  /* Main content */
+  .main-content {
+    flex: 1;
+    padding: 24px;
+    margin-left: 64px; /* Match the collapsed sidebar width */
+  }
+  
+  .content-title {
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 16px;
+  }
+  
+  .content-box {
+    background-color: #f8f9fa;
+    border-radius: 6px;
+    padding: 20px;
+    margin-top: 24px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  
+  .content-box h2 {
+    font-size: 18px;
+    margin-top: 0;
+    margin-bottom: 12px;
+  }
+  
+  .content-box p {
+    line-height: 1.5;
+    color: #4b5563;
+  }

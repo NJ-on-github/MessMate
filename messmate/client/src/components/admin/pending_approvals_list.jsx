@@ -27,7 +27,7 @@ const pending_approvals_list = () => {
 
     useEffect(() => {
         fetchPendingApprovals();
-    },[])
+    }, [])
 
 
     const approveRegistration = async (studentId) => {
@@ -49,7 +49,7 @@ const pending_approvals_list = () => {
                 method: 'PATCH'
             });
             if (!response.ok) {
-                throw new Error('Failed to approve registration');
+                throw new Error('Failed to reject registration');
             }
             fetchPendingApprovals(); // Refresh the list after approval
         } catch (err) {
@@ -58,53 +58,53 @@ const pending_approvals_list = () => {
     };
 
 
-            return (
-                <div>
-                    <h2>Pending Approvals</h2>
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>ID</th>
-                                <th>Name</th>
-                                <th>Email</th>
-                                <th>Hostel</th>
-                                <th>Branch</th>
-                                <th>Reject</th>
-                                <th>Approve</th>
-                            </tr>
-                        </thead>
-                        {isEmpty && <div>No students found</div>}
-                        {error && <div>Error: {error}</div>}
-                        {loading && <div>Loading...</div>}
-                        <tbody>
-                            {receivedData.map((student) => (
-                                <tr key={student.student_id}>
-                                    <td>{student.student_id}</td>
-                                    <td>{student.name}</td>
-                                    <td>{student.email}</td>
-                                    <td>{student.hostel_name}</td>
-                                    <td>{student.branch}</td>
-                                    <td><button onClick={() => {
-                                        rejectRegistration(student.student_id)
-                                        fetchPendingApprovals()
-                                    }}>
-                                        Reject
-                                    </button>
-                                    </td>
-                                    <td><button onClick={() => {
-                                        approveRegistration(student.student_id);
-                                        fetchPendingApprovals()
-                                    }}>
-                                        Approve
-                                    </button>
-                                    </td>
-                                </tr>
-                            ))}
-                        </tbody>
-                    </table>
-                    {receivedData.length === 0 && <div>No pending approvals found</div>}
-                </div>
-            )
-        }
+    return (
+        <div>
+            <h2>Pending Approvals</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Hostel</th>
+                        <th>Branch</th>
+                        <th>Reject</th>
+                        <th>Approve</th>
+                    </tr>
+                </thead>
+                {isEmpty && <div>No students found</div>}
+                {error && <div>Error: {error}</div>}
+                {loading && <div>Loading...</div>}
+                <tbody>
+                    {receivedData.map((student) => (
+                        <tr key={student.student_id}>
+                            <td>{student.student_id}</td>
+                            <td>{student.name}</td>
+                            <td>{student.email}</td>
+                            <td>{student.hostel_name}</td>
+                            <td>{student.branch}</td>
+                            <td><button onClick={() => {
+                                rejectRegistration(student.student_id)
+                                fetchPendingApprovals()
+                            }}>
+                                Reject
+                            </button>
+                            </td>
+                            <td><button onClick={() => {
+                                approveRegistration(student.student_id);
+                                fetchPendingApprovals()
+                            }}>
+                                Approve
+                            </button>
+                            </td>
+                        </tr>
+                    ))}
+                </tbody>
+            </table>
+            {receivedData.length === 0 && <div>No pending approvals found</div>}
+        </div>
+    )
+}
 
 export default pending_approvals_list

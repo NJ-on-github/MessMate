@@ -75,6 +75,14 @@ const GET_ALL_STUDENTS = `
   ORDER BY s.student_id ASC;
 `;
 
+const GET_BLOCKED_STUDENTS = `
+  SELECT s.student_id, u.name, u.email, a.blocked_reason
+  FROM account_status a
+  JOIN students s ON a.student_id = s.student_id
+  JOIN users u ON s.user_id = u.user_id
+  WHERE a.is_blocked = true
+`;
+
 const COUNT_PENDING_REGISTRATIONS = `
   SELECT COUNT(*) FROM students WHERE registration_status = 'pending';
 `;
@@ -90,39 +98,43 @@ const APPROVE_REGISTRATION = `
 UPDATE students SET registration_status = 'approved' WHERE student_id = $1;
 `;
 
+const BLOCK_REGISTRATION = `
+UPDATE students SET registration_status = 'blocked' WHERE student_id = $1;
+`;
+
 // Query to initialize payments for a student
 const INITIALIZE_STUDENT_PAYMENTS = `
-  WITH months AS (
+WITH months AS (
     SELECT 
       generate_series(
         date_trunc('month', CURRENT_DATE),
         date_trunc('month', CURRENT_DATE) + interval '2 months',
         interval '1 month'
       ) AS month_date
-  ),
+      ),
   applicable_fees AS (
     SELECT 
       m.month_date,
       f.fee_id,
       f.monthly_fee,
       f.effective_from
-    FROM months m
+      FROM months m
     CROSS JOIN LATERAL (
       SELECT fee_id, monthly_fee, effective_from
       FROM fees_structure
       WHERE effective_from <= (m.month_date + interval '1 month - 1 day')
       ORDER BY effective_from DESC
       LIMIT 1
-    ) f
-  )
-  INSERT INTO payments (
-    student_id, 
+      ) f
+      )
+      INSERT INTO payments (
+        student_id, 
     fee_id, 
     amount, 
     payment_status, 
     due_date, 
     month_year
-  )
+    )
   SELECT 
     $1 AS student_id, 
     af.fee_id, 
@@ -135,8 +147,8 @@ const INITIALIZE_STUDENT_PAYMENTS = `
     SELECT 1 FROM payments 
     WHERE student_id = $1 
     AND month_year = to_char(af.month_date, 'MM/YYYY')
-  )`;
-
+    )`;
+    
 // const INITIALIZE_STUDENT_PAYMENTS = `
 //   INSERT INTO payments (student_id, fee_id, amount, payment_status, month_year)
 // SELECT 
@@ -155,6 +167,13 @@ const INITIALIZE_STUDENT_PAYMENTS = `
 const temp = `INSERT INTO payments (student_id, fee_id, amount, payment_status, payment_date, due_date, month_year)
 VALUES ($1, 1, 5000.00, 'pending', NULL, '2025-03-10', '2025-03')`;
 
+const UNBLOCK_STUDENT = `
+  UPDATE account_status
+  SET is_blocked = false,
+      blocked_reason = NULL
+  WHERE student_id = $1
+`;
+
 
 const REJECT_REGISTRATION = `
   UPDATE students SET registration_status = 'rejected' WHERE student_id = $1;`;
@@ -163,9 +182,9 @@ const BLOCK_STUDENT = `
   UPDATE account_status SET is_blocked = true, blocked_reason = $1 WHERE student_id = $2;
 `;
 
-const UNBLOCK_STUDENT = `
-  UPDATE account_status SET is_blocked = false, blocked_reason = NULL WHERE student_id = $1;
-`;
+// const UNBLOCK_STUDENT = `
+//   UPDATE account_status SET is_blocked = false, blocked_reason = NULL WHERE student_id = $1;
+// `;
 
 const GET_PENDING_REGISTRATIONS = `
   SELECT s.student_id, u.name, u.email, s.hostel_name, s.branch
@@ -327,11 +346,13 @@ module.exports = {
     COUNT_PENDING_REGISTRATIONS,
     COUNT_PENDING_PAYMENTS_THIS_MONTH,
     GET_ALL_STUDENTS,
+    GET_BLOCKED_STUDENTS,
+    UNBLOCK_STUDENT,
     APPROVE_REGISTRATION,
+    BLOCK_REGISTRATION,
     INITIALIZE_STUDENT_PAYMENTS,
     REJECT_REGISTRATION,
     BLOCK_STUDENT,
-    UNBLOCK_STUDENT,
     GET_PENDING_REGISTRATIONS,
     GET_PENDING_PAYMENTS_BY_MONTH,
     INSERT_FEE,
