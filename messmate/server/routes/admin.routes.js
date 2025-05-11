@@ -30,7 +30,6 @@ router.post('/login', async (req, res) => {
   }
 });
 
-
 router.get('/all', async (req, res) => {
   try {
     const result = await pool.query('SELECT * FROM users WHERE role = $1', ['student']);
@@ -75,7 +74,7 @@ router.patch('/students/unblock/:student_id', async (req, res) => {
 });
 
 
-// admin
+//registrations
 router.patch('/approve-registration/:id', async (req, res) => {
   const client = await pool.connect();
 

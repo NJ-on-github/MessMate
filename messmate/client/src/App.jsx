@@ -172,6 +172,13 @@ const router = createBrowserRouter([
       <Admin_sidebar />
       <Menu />
     </div>
+  },
+  {
+    path: "/admin/*",
+    element: <>
+    <Admin_sidebar />
+    <h1>Page doesn't exist</h1>
+    </>
   }
 ]);
 
