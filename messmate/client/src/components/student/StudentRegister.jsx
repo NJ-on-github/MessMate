@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-const student_register = () => {
+const StudentRegister = () => {
     const [formData, setFormData] = useState({
         name: '',
         email: '',
@@ -93,4 +93,4 @@ const buttonStyle = {
     cursor: 'pointer',
 };
 
-export default student_register;
+export default StudentRegister;

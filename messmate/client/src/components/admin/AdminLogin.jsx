@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-const admin_login = () => {
+const AdminLogin = () => {
   const [adminData, setAdminData] = useState({ email: '', password: '' });
   const [message, setMessage] = useState('');
   const navigate = useNavigate();
@@ -74,4 +74,4 @@ const buttonStyle = {
   cursor: 'pointer',
 };
 
-export default admin_login;
+export default AdminLogin;

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 
-const pending_payments_by_month = () => {
+const PendingPaymentsByMonth = () => {
   const [month, setMonth] = useState('');
   const [payments, setPayments] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -68,4 +68,4 @@ const pending_payments_by_month = () => {
   );
 };
 
-export default pending_payments_by_month;
+export default PendingPaymentsByMonth;

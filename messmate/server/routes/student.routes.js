@@ -44,63 +44,9 @@ router.post('/register', async (req, res) => {
     }
 });
 
-router.get('/payments/:student_id', async (req, res) => {
-    const studentId = req.params.student_id;
-
-    try {
-        const result = await pool.query(queries.GET_STUDENT_PAYMENTS, [studentId]);
-        res.status(200).json(result.rows);
-    } catch (err) {
-        console.error(err);
-        res.status(500).json({ error: 'Failed to fetch payments.' });
-    }
-});
-
-router.get('/dashboard/:student_id', async (req, res) => {
-    const studentId = req.params.student_id;
-
-    try {
-        const result = await pool.query(queries.GET_STUDENT_DASHBOARD_DATA, [studentId]);
-        if (result.rows.length === 0) return res.status(404).json({ error: 'Student not found' });
-
-        res.json(result.rows[0]);
-
-    } catch (err) {
-        console.error(err);
-        res.status(500).json({ error: 'Failed to fetch dashboard data.' });
-    }
-});
-
-
-router.get('/todays-menu', async (req, res) => {
-    try {
-        const menuIdResult = await pool.query(queries.GET_TODAYS_MENU_ID);
-        if (menuIdResult.rows.length === 0) {
-            return res.json({ breakfast: [], lunch: [], dinner: [] });
-        }
-
-        const menuId = menuIdResult.rows[0].id;
-
-        const [breakfast, lunch, dinner] = await Promise.all([
-            pool.query(queries.GET_TODAYS_BREAKFAST, [menuId]),
-            pool.query(queries.GET_TODAYS_LUNCH, [menuId]),
-            pool.query(queries.GET_TODAYS_DINNER, [menuId])
-        ]);
-
-        res.json({
-            breakfast: breakfast.rows.map(r => r.name),
-            lunch: lunch.rows.map(r => r.name),
-            dinner: dinner.rows.map(r => r.name)
-        });
-
-    } catch (err) {
-        console.error(err);
-        res.status(500).json({ error: 'Failed to fetch today’s menu.' });
-    }
-});
 
 router.post('/login', async (req, res) => {
-    const { email, password } = req.body;
+const { email, password } = req.body;
   
     try {
       // 1. Find user
@@ -165,6 +111,62 @@ router.post('/login', async (req, res) => {
       res.status(500).json({ error: 'Something went wrong. Please try again.' });
     }
   });
+
+
+router.get('/payments/:student_id', async (req, res) => {
+    const studentId = req.params.student_id;
+
+    try {
+        const result = await pool.query(queries.GET_STUDENT_PAYMENTS, [studentId]);
+        res.status(200).json(result.rows);
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: 'Failed to fetch payments.' });
+    }
+});
+
+router.get('/dashboard/:student_id', async (req, res) => {
+    const studentId = req.params.student_id;
+
+    try {
+        const result = await pool.query(queries.GET_STUDENT_DASHBOARD_DATA, [studentId]);
+        if (result.rows.length === 0) return res.status(404).json({ error: 'Student not found' });
+
+        res.json(result.rows[0]);
+
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: 'Failed to fetch dashboard data.' });
+    }
+});
+
+
+router.get('/todays-menu', async (req, res) => {
+    try {
+        const menuIdResult = await pool.query(queries.GET_TODAYS_MENU_ID);
+        if (menuIdResult.rows.length === 0) {
+            return res.json({ breakfast: [], lunch: [], dinner: [] });
+        }
+
+        const menuId = menuIdResult.rows[0].id;
+
+        const [breakfast, lunch, dinner] = await Promise.all([
+            pool.query(queries.GET_TODAYS_BREAKFAST, [menuId]),
+            pool.query(queries.GET_TODAYS_LUNCH, [menuId]),
+            pool.query(queries.GET_TODAYS_DINNER, [menuId])
+        ]);
+
+        res.json({
+            breakfast: breakfast.rows.map(r => r.name),
+            lunch: lunch.rows.map(r => r.name),
+            dinner: dinner.rows.map(r => r.name)
+        });
+
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: 'Failed to fetch today’s menu.' });
+    }
+});
 
 
 module.exports = router;

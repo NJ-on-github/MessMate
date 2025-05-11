@@ -2,7 +2,7 @@ import React from 'react'
 import { useState } from 'react';
 import { useEffect } from 'react';
 
-const blocked_students_list = () => {
+const BlockedStudentsList = () => {
             const [blockedStudents, setBlockedStudents] = useState([]);
             const [error, setError] = useState(null);
 
@@ -72,4 +72,4 @@ const blocked_students_list = () => {
             )
         }
 
-        export default blocked_students_list
+        export default BlockedStudentsList

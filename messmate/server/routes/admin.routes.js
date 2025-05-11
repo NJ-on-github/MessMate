@@ -42,25 +42,6 @@ router.get('/all', async (req, res) => {
   }
 });
 
-router.get('/students/all-students', async (req, res) => {
-  try {
-    const result = await pool.query(queries.GET_ALL_STUDENTS);
-    res.json(result.rows);
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: 'Failed to fetch students.' });
-  }
-});
-
-router.get('/students/blocked-students', async (req, res) => {
-  try {
-    const result = await pool.query(queries.GET_BLOCKED_STUDENTS);
-    res.json(result.rows);
-  } catch (err) {
-    console.error(err.message);
-    res.status(500).json({ error: 'Failed to fetch students.' });
-  }
-});
 
 router.patch('/students/unblock/:student_id', async (req, res) => {
   const { student_id } = req.params;
@@ -134,15 +115,32 @@ router.patch('/reject-registration/:id', async (req, res) => {
   }
 });
 
+// router.patch('/block-student/:id', async (req, res) => {
+//   // console.log(req.body);
+//   const reason = req.body.reason || 'Unpaid dues';
+//   try {
+//     await pool.query(queries.BLOCK_STUDENT, [reason, req.params.id]);
+//     res.json({ message: "Student blocked." });
+//   } catch (err) {
+//     res.status(500).json({ error: 'Blocking failed.' });
+//   }
+// });
+
 router.patch('/block-student/:id', async (req, res) => {
-  const reason = req.body.reason || 'Unpaid dues';
+  const reason = req.body.reason || 'Unpaid dues'; // Default reason if not provided
+  console.log(req.body)
+  console.log(reason)
+  const studentId = req.params.id;
+
   try {
-    await pool.query(queries.BLOCK_STUDENT, [reason, req.params.id]);
+    await pool.query(queries.BLOCK_STUDENT, [reason, studentId]);
     res.json({ message: "Student blocked." });
   } catch (err) {
     res.status(500).json({ error: 'Blocking failed.' });
   }
 });
+
+
 
 router.patch('/unblock-student/:id', async (req, res) => {
   try {
@@ -545,6 +543,7 @@ router.get('/payments/month', async (req, res) => {
     const result = await pool.query(
       `SELECT 
         p.payment_id,
+        p.student_id,
         p.amount,
         p.payment_status,
         p.payment_date,
@@ -620,4 +619,24 @@ router.patch('/payments/update-payments/:payment_id', async (req, res) => {
 });
 
 
+//students
+router.get('/students/all-students', async (req, res) => {
+  try {
+    const result = await pool.query(queries.GET_ALL_STUDENTS);
+    res.json(result.rows);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Failed to fetch students.' });
+  }
+});
+
+router.get('/students/blocked-students', async (req, res) => {
+  try {
+    const result = await pool.query(queries.GET_BLOCKED_STUDENTS);
+    res.json(result.rows);
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).json({ error: 'Failed to fetch students.' });
+  }
+});
 module.exports = router;

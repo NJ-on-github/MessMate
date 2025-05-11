@@ -1,8 +1,8 @@
 import React from 'react'
-import './student_login_message.css'
+import './styles/StudentLoginMessage.css'
 import '../common/form.css'
 
-const student_login_message = (props) => {
+const StudentLoginMessage = (props) => {
   return (
     <div>
       <h2 className='login-message'>{props.message}</h2>
@@ -11,4 +11,4 @@ const student_login_message = (props) => {
   )
 }
 
-export default student_login_message
+export default StudentLoginMessage

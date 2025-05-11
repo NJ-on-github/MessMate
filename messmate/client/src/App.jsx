@@ -1,38 +1,40 @@
+import React, { useState, useEffect } from 'react'
+
 //import landing page
 import Landing_page from './components/common/landing_page.jsx'
 
 // import './App.css'
-import React, { useState, useEffect } from 'react'
-import Student_login_card from './components/student/student_login_card.jsx'
-import Student_login_message from './components/student/student_login_message.jsx'
-import Student_registration_card from './components/student/student_register_card.jsx'
-import All_student_list from './components/admin/all_student_list.jsx'
-import PendingPaymentsList from './components/admin/pending_payments_list.jsx'
-import PendingApprovalsList from './components/admin/pending_approvals_list.jsx'
+import PendingPaymentsList from './components/admin/PendingPaymentsList.jsx'
 import All from './components/admin/all.jsx'
-import Monthly_fees from './components/admin/monthly_fees.jsx'
 
 //admin
 import Admin_sidebar from './components/admin/sidebar.jsx'
-import Admin_login from './components/admin/admin_login.jsx'
-import Menu from './components/admin/menu.jsx'
-import StudentPaymentManager from './components/admin/student_payment_manager.jsx'
+import Admin_login from './components/admin/AdminLogin.jsx'
+import Menu from './components/admin/Menu.jsx'
+import StudentPaymentManager from './components/admin/StudentPaymentManager.jsx'
+import All_student_list from './components/admin/AllStudentList.jsx'
+import PendingApprovalsList from './components/admin/PendingApprovalsList.jsx'
 
+import Monthly_fees from './components/admin/monthly_fees.jsx'
 //importing css
 import './common.css'
 import './components/common/table.css'
 
 //student
-import Student_register from './components/student/student_register.jsx'
+import Navbar_basic from './components/student/Navbar.jsx'
+import Student_login_card from './components/student/StudentLogin.jsx'
+import Student_registration_card from './components/student/StudentRegisterTemp.jsx'
+import Student_register from './components/student/StudentRegister.jsx'
 import Student_sidebar_temp from './components/student/student_sidebar_temp.jsx'
-import Navbar_basic from './components/student/navbar_basic.jsx'
-import Student_payments from './components/student/student_payments.jsx'
+import Student_login_message from './components/student/StudentLoginMessage.jsx'
+import Student_payments from './components/student/StudentPayments.jsx'
 import Test from './components/student/test.jsx'
 
 import { createBrowserRouter, RouterProvider } from 'react-router-dom'
 
 import OverlaySidebar from './components/admin/OverlaySidebar.jsx'
 import PushContentSidebar from './components/admin/PushContentSidebar.jsx'
+import MonthlyPaymentStatus from './components/admin/MonthlyPaymentStatus.jsx'
 
 const router = createBrowserRouter([
   {
@@ -142,7 +144,7 @@ const router = createBrowserRouter([
     path: "/admin/payments/defaulters",
     element: <div>
       <Admin_sidebar />
-      <All_student_list />
+      <MonthlyPaymentStatus />
     </div>
   },
   {

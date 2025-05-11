@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 
-const menu = () => {
+const Menu = () => {
     const [breakfastItems, setBreakfastItems] = useState([]);
   const [lunchItems, setLunchItems] = useState([]);
   const [dinnerItems, setDinnerItems] = useState([]);
@@ -24,9 +24,9 @@ const menu = () => {
   const fetchAllItems = async () => {
     try {
       const [breakfastRes, lunchRes, dinnerRes] = await Promise.all([
-        fetch('http://localhost:3000/admin/menu/breakfast-items'),
-        fetch('http://localhost:3000/admin/menu/lunch-items'),
-        fetch('http://localhost:3000/admin/menu/dinner-items'),
+        fetch('http://localhost:3000/admin/Menu/breakfast-items'),
+        fetch('http://localhost:3000/admin/Menu/lunch-items'),
+        fetch('http://localhost:3000/admin/Menu/dinner-items'),
       ]);
 
       const breakfastData = await breakfastRes.json();
@@ -38,7 +38,7 @@ const menu = () => {
       setDinnerItems(dinnerData);
 
     } catch (err) {
-      console.error('Failed to load menu items', err);
+      console.error('Failed to load Menu items', err);
     } finally {
       setLoading(false);
     }
@@ -60,15 +60,15 @@ const menu = () => {
 
   const handleSaveMenu = async () => {
     try {
-      const res = await fetch('http://localhost:3000/admin/menu/save-todays-menu', {
+      const res = await fetch('http://localhost:3000/admin/Menu/save-todays-Menu', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(todaysMenu),
       });
 
-      if (!res.ok) throw new Error('Failed to save menu');
+      if (!res.ok) throw new Error('Failed to save Menu');
 
-      alert('Today\'s menu saved successfully!');
+      alert('Today\'s Menu saved successfully!');
     } catch (err) {
       alert(err.message);
     }
@@ -78,7 +78,7 @@ const menu = () => {
     try {
       if (!newItemName[category]) return alert('Please enter an item name.');
 
-      const res = await fetch(`http://localhost:3000/admin/menu/add-item`, {
+      const res = await fetch(`http://localhost:3000/admin/Menu/add-item`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ name: newItemName[category], category }),
@@ -94,7 +94,7 @@ const menu = () => {
     }
   };
 
-  if (loading) return <p>Loading menu items...</p>;
+  if (loading) return <p>Loading Menu items...</p>;
 
   return (
     <div style={{ display: 'flex', height: '90vh', padding: '2rem' }}>
@@ -236,4 +236,4 @@ const addButtonStyle = {
   fontSize: '14px'
 };
 
-export default menu;
+export default Menu;

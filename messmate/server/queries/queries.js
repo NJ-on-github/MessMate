@@ -141,7 +141,7 @@ WITH months AS (
     af.monthly_fee AS amount, 
     'pending' AS payment_status, 
     af.month_date + interval '10 days' AS due_date,
-    to_char(af.month_date, 'MM/YYYY') AS month_year
+    to_char(af.month_date, 'MM-YYYY') AS month_year
   FROM applicable_fees af
   WHERE NOT EXISTS (
     SELECT 1 FROM payments 

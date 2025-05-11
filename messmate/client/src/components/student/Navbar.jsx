@@ -3,7 +3,7 @@ import { Link, NavLink } from 'react-router-dom'
 import '../common/sidebar.css'
 import { useParams } from 'react-router-dom'
 
-const navbar_basic = () => {
+const Navbar = () => {
     const { studentId } = useParams();
     return (
         <div>
@@ -19,5 +19,5 @@ const navbar_basic = () => {
     )
 }
 
-export default navbar_basic
+export default Navbar
 

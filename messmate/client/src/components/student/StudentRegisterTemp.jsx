@@ -1,8 +1,8 @@
 import React from 'react'
-import './student_register_card.css'
+import './styles/StudentRegister.css'
 import '../common/form.css'
 
-const student_register_card = () => {
+const StudentRegister = () => {
   return (
     <div>
       <form action="post">
@@ -32,4 +32,4 @@ const student_register_card = () => {
   )
 }
 
-export default student_register_card
+export default StudentRegister

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 
-const pending_approvals_list = () => {
+const PendingApprovalsList = () => {
     const [receivedData, setreceivedData] = useState([]);
     const [error, setError] = useState(null);
     const [loading, setLoading] = useState(true);
@@ -107,4 +107,4 @@ const pending_approvals_list = () => {
     )
 }
 
-export default pending_approvals_list
+export default PendingApprovalsList

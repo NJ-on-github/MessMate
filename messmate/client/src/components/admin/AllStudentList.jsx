@@ -2,7 +2,7 @@ import React from 'react'
 import { useState } from 'react'
 import { useEffect } from 'react'
 
-const all_student_list = () => {
+const AllStudentList = () => {
 
     const [receivedData, setreceivedData] = useState([]);
     const [error, setError] = useState(null);
@@ -69,4 +69,4 @@ const all_student_list = () => {
 
 }
 
-export default all_student_list
+export default AllStudentList

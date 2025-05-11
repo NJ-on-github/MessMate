@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-const student_payment_manager = () => {
+const StudentPaymentManager = () => {
   const [query, setQuery] = useState('');
   const [results, setResults] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -95,7 +95,7 @@ const student_payment_manager = () => {
   );
 };
 
-export default student_payment_manager;
+export default StudentPaymentManager;
 
 
 

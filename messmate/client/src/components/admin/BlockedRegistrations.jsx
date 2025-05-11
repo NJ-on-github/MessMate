@@ -2,7 +2,7 @@ import React from 'react'
 import { useEffect, useState } from 'react';
 
 
-const blocked_registrations = () => {
+const BLockedRegistrations = () => {
         const [receivedData, setreceivedData] = useState([]);
         const [error, setError] = useState(null);
         const [loading, setLoading] = useState(true);
@@ -107,4 +107,4 @@ const blocked_registrations = () => {
 )
 }
 
-export default blocked_registrations
+export default BLockedRegistrations
