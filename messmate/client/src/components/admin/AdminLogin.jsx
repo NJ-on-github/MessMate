@@ -1,5 +1,9 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { NavLink } from 'react-router-dom';
+import "../common/table.css";
+import "../common/common.css";
+import "../common/form.css";
 
 const AdminLogin = () => {
   const [adminData, setAdminData] = useState({ email: '', password: '' });
@@ -40,32 +44,40 @@ const AdminLogin = () => {
   };
 
   return (
-    <div style={{ maxWidth: '400px', margin: '2rem auto' }}>
-      <h2>Admin Login</h2>
-      <form onSubmit={handleLogin}>
-        <div style={formGroup}>
-          <label>Email:</label>
-          <input type="email" name="email" value={adminData.email} onChange={handleChange} required />
+    <div className="center-all">
+      <div className='form-container'>
+        <div className="form-header">
+          <h2>Admin Login</h2>
         </div>
+        <form onSubmit={handleLogin}>
+          <div className='formGroup'>
+            <label>Email:</label>
+            <input type="email" name="email" value={adminData.email} onChange={handleChange} required />
+          </div>
 
-        <div style={formGroup}>
-          <label>Password:</label>
-          <input type="password" name="password" value={adminData.password} onChange={handleChange} required />
-        </div>
+          <div className='formGroup'>
+            <label>Password:</label>
+            <input type="password" name="password" value={adminData.password} onChange={handleChange} required />
+          </div>
 
-        <button type="submit" style={buttonStyle}>Login</button>
-      </form>
+          <button className="login-btn" type="submit" style={buttonStyle}>Login</button>
+        </form>
 
-      {message && <p style={{ marginTop: '1rem', color: 'green' }}>{message}</p>}
+        {message && <p style={{ marginTop: '1rem', color: 'green' }}>{message}</p>}
+
+        <NavLink to="/" className="form-nav-link">
+          Go back to Homepage
+        </NavLink>
+      </div>
     </div>
   );
 };
 
-const formGroup = {
-  marginBottom: '1rem',
-  display: 'flex',
-  flexDirection: 'column',
-};
+// const formGroup = {
+//   marginBottom: '1rem',
+//   display: 'flex',
+//   flexDirection: 'column',
+// };
 
 const buttonStyle = {
   padding: '10px 20px',

@@ -1,4 +1,6 @@
 import React, { useEffect, useState } from 'react';
+import "../common/table.css";
+import "../common/common.css";
 
 const MonthlyPaymentStatus = () => {
   const [month, setMonth] = useState('');
@@ -105,7 +107,7 @@ const MonthlyPaymentStatus = () => {
 
   return (
     <div className="p-6">
-      <h2 className="text-2xl font-bold mb-6">Monthly Payment Status</h2>
+      <h2 className='table-heading'>Monthly Payment Status</h2>
 
       <div className="mb-6 bg-white p-4 rounded shadow">
         <label className="block text-sm font-medium mb-2">Select Month:</label>
@@ -131,6 +133,7 @@ const MonthlyPaymentStatus = () => {
               {paidPayments.length === 0 ? (
                 <p className="p-4 text-gray-500">No students have paid for this month yet.</p>
               ) : (
+                <div className="table-container"> 
                 <table className="w-full">
                   <thead className="bg-green-50">
                     <tr>
@@ -151,6 +154,7 @@ const MonthlyPaymentStatus = () => {
                     ))}
                   </tbody>
                 </table>
+                </div>
               )}
             </div>
           </div>

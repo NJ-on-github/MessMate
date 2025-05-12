@@ -4,7 +4,7 @@ const StudentSidebar = () => {
 
   
   return (
-    <div>
+    <div className='sidebar'>
       <a href="/payments">payments</a>
     </div>
   )

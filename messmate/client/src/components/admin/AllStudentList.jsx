@@ -1,6 +1,8 @@
 import React from 'react'
 import { useState } from 'react'
 import { useEffect } from 'react'
+import "../common/table.css";
+import "../common/common.css";
 
 const AllStudentList = () => {
 

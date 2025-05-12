@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from 'react';
+import "../common/table.css";
+import "../common/common.css";
 
 const PendingPaymentsByMonth = () => {
   const [month, setMonth] = useState('');
@@ -26,7 +28,7 @@ const PendingPaymentsByMonth = () => {
 
   return (
     <div className="p-4">
-      <h2 className="text-xl font-bold mb-4">Pending Payments by Month</h2>
+      <h2 className='table-heading'>Pending Payments by Month</h2>
 
       <div className="mb-4">
         <label className="mr-2">Select Month:</label>
@@ -43,6 +45,7 @@ const PendingPaymentsByMonth = () => {
       ) : payments.length === 0 ? (
         <p>No pending payments for selected month.</p>
       ) : (
+        <div className="table-container"> 
         <table className="w-full border text-left">
           <thead>
             <tr className="bg-gray-200">
@@ -63,6 +66,7 @@ const PendingPaymentsByMonth = () => {
             ))}
           </tbody>
         </table>
+        </div>
       )}
     </div>
   );

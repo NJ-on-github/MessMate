@@ -1,6 +1,7 @@
 import React from 'react'
 import { useEffect, useState } from 'react';
-
+import "../common/table.css";
+import "../common/common.css";
 
 const BLockedRegistrations = () => {
         const [receivedData, setreceivedData] = useState([]);

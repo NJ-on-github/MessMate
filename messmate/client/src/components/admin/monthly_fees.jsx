@@ -1,5 +1,7 @@
 import { useState, useEffect } from 'react';
 import React from 'react';
+import "../common/table.css";
+import "../common/common.css";
 
 export default function FeeStructureManagement() {
   const [feeStructures, setFeeStructures] = useState([]);
@@ -122,7 +124,7 @@ export default function FeeStructureManagement() {
 
   return (
     <div className="p-6 max-w-6xl mx-auto">
-      <h1 className="text-3xl font-bold mb-6">Fee Structure Management</h1>
+      <h1 className='table-heading'>Fee Structure Management</h1>
       
       {/* Add New Fee Structure Form */}
       <div className="bg-white p-6 rounded-lg shadow-md mb-8">
@@ -194,6 +196,7 @@ export default function FeeStructureManagement() {
         
         {!loading && feeStructures.length > 0 && (
           <div className="overflow-x-auto">
+            <div className="table-container"> 
             <table className="min-w-full divide-y divide-gray-200">
               <thead className="bg-gray-50">
                 <tr>
@@ -215,6 +218,7 @@ export default function FeeStructureManagement() {
                 }
               </tbody>
             </table>
+            </div>
           </div>
         )}
       </div>

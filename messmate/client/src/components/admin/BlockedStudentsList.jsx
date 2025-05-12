@@ -1,6 +1,8 @@
 import React from 'react'
 import { useState } from 'react';
 import { useEffect } from 'react';
+import "../common/table.css";
+import "../common/common.css";
 
 const BlockedStudentsList = () => {
             const [blockedStudents, setBlockedStudents] = useState([]);
@@ -35,11 +37,14 @@ const BlockedStudentsList = () => {
 
             return (
                 <div className="p-4">
-                    <h2 className="text-xl font-bold mb-4">Blocked Student Accounts</h2>
+                    <h2 className='table-heading'>Blocked Student Accounts</h2>
                     {error && <p className="text-red-600">{error}</p>}
                     {blockedStudents.length === 0 ? (
                         <p>No blocked accounts found.</p>
                     ) : (
+                        <div className="table-container">
+
+                        
                         <table className="w-full border">
                             <thead className="bg-gray-100">
                                 <tr>
@@ -67,6 +72,7 @@ const BlockedStudentsList = () => {
                                 ))}
                             </tbody>
                         </table>
+                        </div>
                     )}
                 </div>
             )

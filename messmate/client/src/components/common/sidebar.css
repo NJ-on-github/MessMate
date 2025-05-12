@@ -1,4 +1,4 @@
-@import url('../../common.css');
+@import url('../common/common.css');
 
 .active-navbar-component {
     background-color: antiquewhite;

@@ -1,4 +1,6 @@
 import React, { useState } from 'react';
+import "../common/table.css";
+import "../common/common.css";
 
 const StudentPaymentManager = () => {
   const [query, setQuery] = useState('');

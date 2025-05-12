@@ -1,4 +1,6 @@
 import React, { useEffect, useState } from 'react';
+import "../common/table.css";
+import "../common/common.css";
 
 const tablesToShow = [
   'users',

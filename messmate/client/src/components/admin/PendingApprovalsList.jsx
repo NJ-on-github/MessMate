@@ -1,4 +1,6 @@
 import React, { useEffect, useState } from 'react';
+import "../common/table.css";
+import "../common/common.css";
 
 const PendingApprovalsList = () => {
     const [receivedData, setreceivedData] = useState([]);
@@ -60,7 +62,8 @@ const PendingApprovalsList = () => {
 
     return (
         <div>
-            <h2>Pending Approvals</h2>
+            <h2 className='table-heading'>Pending Approvals</h2>
+            <div className="table-container">
             <table>
                 <thead>
                     <tr>
@@ -84,14 +87,14 @@ const PendingApprovalsList = () => {
                             <td>{student.email}</td>
                             <td>{student.hostel_name}</td>
                             <td>{student.branch}</td>
-                            <td><button onClick={() => {
+                            <td><button className='btn-warning' onClick={() => {
                                 rejectRegistration(student.student_id)
                                 fetchPendingApprovals()
                             }}>
                                 Reject
                             </button>
                             </td>
-                            <td><button onClick={() => {
+                            <td><button className='btn-success' onClick={() => {
                                 approveRegistration(student.student_id);
                                 fetchPendingApprovals()
                             }}>
@@ -102,6 +105,7 @@ const PendingApprovalsList = () => {
                     ))}
                 </tbody>
             </table>
+            </div>
             {receivedData.length === 0 && <div>No pending approvals found</div>}
         </div>
     )

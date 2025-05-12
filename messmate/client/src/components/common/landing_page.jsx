@@ -1,5 +1,8 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
+import "../common/table.css";
+import "../common/common.css";
+import "../common/form.css";
 
 const landing_page = () => {
   const navigate = useNavigate();
@@ -14,6 +17,11 @@ const landing_page = () => {
             style={buttonStyle} 
             onClick={() => navigate('/admin/login')}
           >
+            <img 
+              src="/admin.svg" 
+              alt="Admin Icon" 
+              style={iconStyle}
+            />
             Admin
           </button>
 
@@ -21,6 +29,11 @@ const landing_page = () => {
             style={buttonStyle} 
             onClick={() => navigate('/student/login')}
           >
+            <img 
+              src="/student.svg" 
+              alt="Student Icon" 
+              style={iconStyle}
+            />
             Student
           </button>
         </div>
@@ -30,6 +43,31 @@ const landing_page = () => {
     </div>
   );
 };
+
+
+const buttonStyle = {
+  flex: 1,
+  margin: '0 0.5rem',
+  padding: '1rem',
+  fontSize: '1.2rem',
+  backgroundColor: '#0a2540',
+  color: 'white',
+  border: 'none',
+  borderRadius: '4px',
+  cursor: 'pointer',
+  transition: 'background-color 0.3s',
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  gap: '0.5rem'
+};
+
+const iconStyle = {
+  width: '24px',
+  height: '24px',
+  filter: 'brightness(0) invert(1)' // Makes the SVG white
+};
+
 
 const containerStyle = {
   minHeight: '100vh',
@@ -60,18 +98,18 @@ const buttonContainerStyle = {
   marginBottom: '1.5rem'
 };
 
-const buttonStyle = {
-  flex: 1,
-  margin: '0 0.5rem',
-  padding: '1rem',
-  fontSize: '1.2rem',
-  backgroundColor: '#0a2540',
-  color: 'white',
-  border: 'none',
-  borderRadius: '4px',
-  cursor: 'pointer',
-  transition: 'background-color 0.3s'
-};
+// const buttonStyle = {
+//   flex: 1,
+//   margin: '0 0.5rem',
+//   padding: '1rem',
+//   fontSize: '1.2rem',
+//   backgroundColor: '#0a2540',
+//   color: 'white',
+//   border: 'none',
+//   borderRadius: '4px',
+//   cursor: 'pointer',
+//   transition: 'background-color 0.3s'
+// };
 
 const smallTextStyle = {
   fontSize: '0.9rem',

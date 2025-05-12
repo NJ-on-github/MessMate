@@ -1,24 +1,21 @@
 import React, { useState, useEffect } from 'react'
+import { createBrowserRouter, RouterProvider } from 'react-router-dom'
 
 //import landing page
 import Landing_page from './components/common/landing_page.jsx'
 
 // import './App.css'
-import PendingPaymentsList from './components/admin/PendingPaymentsList.jsx'
 import All from './components/admin/all.jsx'
 
 //admin
 import Admin_sidebar from './components/admin/sidebar.jsx'
 import Admin_login from './components/admin/AdminLogin.jsx'
 import Menu from './components/admin/Menu.jsx'
+import PendingPaymentsList from './components/admin/PendingPaymentsList.jsx'
 import StudentPaymentManager from './components/admin/StudentPaymentManager.jsx'
 import All_student_list from './components/admin/AllStudentList.jsx'
 import PendingApprovalsList from './components/admin/PendingApprovalsList.jsx'
-
 import Monthly_fees from './components/admin/monthly_fees.jsx'
-//importing css
-import './common.css'
-import './components/common/table.css'
 
 //student
 import Navbar_basic from './components/student/Navbar.jsx'
@@ -30,11 +27,14 @@ import Student_login_message from './components/student/StudentLoginMessage.jsx'
 import Student_payments from './components/student/StudentPayments.jsx'
 import Test from './components/student/test.jsx'
 
-import { createBrowserRouter, RouterProvider } from 'react-router-dom'
-
 import OverlaySidebar from './components/admin/OverlaySidebar.jsx'
 import PushContentSidebar from './components/admin/PushContentSidebar.jsx'
 import MonthlyPaymentStatus from './components/admin/MonthlyPaymentStatus.jsx'
+
+//importing css
+import './components/common/common.css'
+import './components/common/table.css'
+import BLockedRegistrations from './components/admin/BlockedRegistrations.jsx'
 
 const router = createBrowserRouter([
   {
@@ -116,21 +116,28 @@ const router = createBrowserRouter([
     path: "/admin/registrations/pending-approvals",
     element: <div>
       <Admin_sidebar />
-      <PendingApprovalsList />,
+      <div className="main-content">
+        <PendingApprovalsList />,
+      </div>
     </div>
   },
   {
     path: "/admin/registrations/rejected-approvals",
     element: <div>
       <Admin_sidebar />
+      <div className="main-content">
+        <BLockedRegistrations />,
       <PendingApprovalsList />,
+      </div>
     </div>
   },
   {
     path: "/admin/payments/pending-payments",
     element: <div>
       <Admin_sidebar />
+      <div className="main-content">
       <PendingPaymentsList />,
+      </div>
     </div>
   },
   {
@@ -178,8 +185,8 @@ const router = createBrowserRouter([
   {
     path: "/admin/*",
     element: <>
-    <Admin_sidebar />
-    <h1>Page doesn't exist</h1>
+      <Admin_sidebar />
+      <h1>Page doesn't exist</h1>
     </>
   }
 ]);
@@ -200,11 +207,11 @@ function App() {
   return (
     <>
       <RouterProvider router={router} />
-      
+
 
       <h1>App</h1>
-     
 
+      {/* <OverlaySidebar /> */}
 
       <PendingPaymentsList />
       <PendingApprovalsList />
