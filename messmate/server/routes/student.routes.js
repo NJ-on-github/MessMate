@@ -164,7 +164,7 @@ router.get('/todays-menu', async (req, res) => {
 
     } catch (err) {
         console.error(err);
-        res.status(500).json({ error: 'Failed to fetch today’s menu.' });
+        res.status(500).json({ error: 'Failed to fetch today\'s menu.' });
     }
 });
 

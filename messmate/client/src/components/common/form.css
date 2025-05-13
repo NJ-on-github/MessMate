@@ -26,7 +26,6 @@
     border-top-right-radius: var(--space-md);
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
     */
-
 }
 
 form {
@@ -59,7 +58,6 @@ form input {
     ;
 }
 
-/* Add hover and focus states for better UX */
 form input:hover {
     border-color: var(--col-gray-300);
 }

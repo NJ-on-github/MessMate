@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import "../common/table.css";
 import "../common/common.css";
 
-const PendingPaymentsList = () => {
+const PaymentsByMonth = () => {
   const [month, setMonth] = useState('');
   const [payments, setPayments] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -41,8 +41,8 @@ const PendingPaymentsList = () => {
     <div className="p-4">
       <h2 className='table-heading'>All Payments for a Month</h2>
 
-      <div className="mb-4">
-        <label className="mr-2">Select Month:</label>
+      <div>
+        <label>Select Month:</label>
         <input
           type="month"
           value={month}
@@ -85,12 +85,12 @@ const PendingPaymentsList = () => {
   );
 };
 
-export default PendingPaymentsList;
+export default PaymentsByMonth;
 
 
 // import React, { useEffect, useState } from 'react';
 
-// const PendingPaymentsList = () => {
+// const PaymentsByMonth = () => {
 //   const [monthYear, setMonthYear] = useState('2025-04'); // Default month
 //   const [pendingStudents, setPendingStudents] = useState([]);
 //   const [loading, setLoading] = useState(false);
@@ -198,4 +198,4 @@ export default PendingPaymentsList;
 //   padding: '10px',
 // };
 
-// export default PendingPaymentsList;
+// export default PaymentsByMonth;

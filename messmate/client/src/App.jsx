@@ -8,20 +8,21 @@ import Landing_page from './components/common/landing_page.jsx'
 import All from './components/admin/all.jsx'
 
 //admin
-import Admin_sidebar from './components/admin/sidebar.jsx'
+import AdminSidebar from './components/admin/AdminSidebar.jsx'
 import Admin_login from './components/admin/AdminLogin.jsx'
 import Menu from './components/admin/Menu.jsx'
-import PendingPaymentsList from './components/admin/PendingPaymentsList.jsx'
+import PaymentsByMonth from './components/admin/PaymentsByMonth.jsx'
 import StudentPaymentManager from './components/admin/StudentPaymentManager.jsx'
 import All_student_list from './components/admin/AllStudentList.jsx'
 import PendingApprovalsList from './components/admin/PendingApprovalsList.jsx'
 import Monthly_fees from './components/admin/monthly_fees.jsx'
 
 //student
-import Navbar_basic from './components/student/Navbar.jsx'
+import StudentNavbar from './components/student/StudentNavbar.jsx'
 import Student_login_card from './components/student/StudentLogin.jsx'
 import Student_registration_card from './components/student/StudentRegisterTemp.jsx'
 import Student_register from './components/student/StudentRegister.jsx'
+import TodaysMenu from './components/student/TodaysMenu.jsx'
 import Student_sidebar_temp from './components/student/student_sidebar_temp.jsx'
 import Student_login_message from './components/student/StudentLoginMessage.jsx'
 import Student_payments from './components/student/StudentPayments.jsx'
@@ -34,7 +35,8 @@ import MonthlyPaymentStatus from './components/admin/MonthlyPaymentStatus.jsx'
 //importing css
 import './components/common/common.css'
 import './components/common/table.css'
-import BLockedRegistrations from './components/admin/BlockedRegistrations.jsx'
+import BlockedRegistrations from './components/admin/BlockedRegistrations.jsx'
+import BlockedStudentsList from './components/admin/BlockedStudentsList.jsx'
 
 const router = createBrowserRouter([
   {
@@ -57,34 +59,32 @@ const router = createBrowserRouter([
     path: "/student/dashboard/:studentId",
     element: <>
       <Test />
-      <Navbar_basic />
-      {/* <Student_sidebar_temp /> */}
-      <Student_login_message message="Welcome to the Student Portal" description="Please log in to access your courses and materials." />
-      <Student_registration_card />
+      <StudentNavbar />
+      <TodaysMenu />
     </>
   },
   {
     path: "/student/payments/:studentId",
     element: <>
-      <Navbar_basic />
+      <StudentNavbar />
       <Student_payments />
     </>
   },
   {
     path: "/test",
-    element: <Navbar_basic />,
+    element: <StudentNavbar />,
   },
   {
     path: "/admin",
     element: <>
-      {/* <Admin_sidebar/> */}
+      {/* <AdminSidebar/> */}
       <All_student_list />
     </>
   },
   {
     path: "/admin/sidebar",
     element: <>
-      {/* <Admin_sidebar /> */}
+      {/* <AdminSidebar /> */}
       <OverlaySidebar />
     </>
   },
@@ -101,7 +101,7 @@ const router = createBrowserRouter([
   {
     path: "/admin/dashboard",
     element: <div>
-      <Admin_sidebar />
+      <AdminSidebar />
       <All_student_list />
       <Menu />
     </div>
@@ -109,13 +109,13 @@ const router = createBrowserRouter([
   {
     path: "/admin/registrations",
     element: <div>
-      <Admin_sidebar />
+      <AdminSidebar />
     </div>
   },
   {
     path: "/admin/registrations/pending-approvals",
     element: <div>
-      <Admin_sidebar />
+      <AdminSidebar />
       <div className="main-content">
         <PendingApprovalsList />,
       </div>
@@ -124,68 +124,69 @@ const router = createBrowserRouter([
   {
     path: "/admin/registrations/rejected-approvals",
     element: <div>
-      <Admin_sidebar />
+      <AdminSidebar />
       <div className="main-content">
-        <BLockedRegistrations />,
+        <BlockedRegistrations />,
       <PendingApprovalsList />,
       </div>
     </div>
   },
   {
-    path: "/admin/payments/pending-payments",
+    path: "/admin/payments/payments-by-month",
     element: <div>
-      <Admin_sidebar />
+      <AdminSidebar />
       <div className="main-content">
-      <PendingPaymentsList />,
+      <PaymentsByMonth />,
       </div>
     </div>
   },
   {
     path: "/admin/payments/update-payments",
     element: <div>
-      <Admin_sidebar />
+      <AdminSidebar />
       <StudentPaymentManager />
     </div>
   },
   {
     path: "/admin/payments/defaulters",
     element: <div>
-      <Admin_sidebar />
+      <AdminSidebar />
       <MonthlyPaymentStatus />
     </div>
   },
   {
     path: "/admin/students/all-students",
     element: <>
-      <Admin_sidebar />
+      <AdminSidebar />
       <All_student_list />
     </>
   },
   {
     path: "/admin/students/blocked-students",
     element: <>
-      <Admin_sidebar />
+      <AdminSidebar />
+      <BlockedStudentsList />
       <All_student_list />
     </>
   },
   {
     path: "/admin/monthly-fees",
     element: <div>
-      <Admin_sidebar />
+      <AdminSidebar />
       <Monthly_fees />
     </div>
   },
   {
     path: "/admin/Todays-menu",
     element: <div>
-      <Admin_sidebar />
+      <AdminSidebar />
       <Menu />
     </div>
   },
   {
     path: "/admin/*",
     element: <>
-      <Admin_sidebar />
+      <AdminSidebar />
       <h1>Page doesn't exist</h1>
     </>
   }
@@ -210,15 +211,16 @@ function App() {
 
 
       <h1>App</h1>
+      <All />
 
       {/* <OverlaySidebar /> */}
 
-      <PendingPaymentsList />
+      {/* <PaymentsByMonth />
       <PendingApprovalsList />
       <All />
       <Monthly_fees />
       <Menu />
-      <Student_register />
+      <Student_register /> */}
 
 
 

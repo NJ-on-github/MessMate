@@ -36,6 +36,9 @@ const AllStudentList = () => {
 
     return (
         <div>
+            <h2 className='table-heading'>All Students</h2>
+            <div className="table-container">
+           
             <table>
                 <thead>
                     <tr>
@@ -66,6 +69,7 @@ const AllStudentList = () => {
                     ))}
                 </tbody>
             </table>
+            </div>
         </div>
     )
 

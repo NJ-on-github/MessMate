@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import "../common/table.css";
 import "../common/common.css";
+import "./styles/Menu.css";
+
 
 const Menu = () => {
-    const [breakfastItems, setBreakfastItems] = useState([]);
+  const [breakfastItems, setBreakfastItems] = useState([]);
   const [lunchItems, setLunchItems] = useState([]);
   const [dinnerItems, setDinnerItems] = useState([]);
   const [todaysMenu, setTodaysMenu] = useState({
@@ -87,7 +89,7 @@ const Menu = () => {
       });
 
       if (!res.ok) throw new Error('Failed to add new item');
-      
+
       alert('Item added successfully!');
       setNewItemName(prev => ({ ...prev, [category]: '' }));
       fetchAllItems(); // Refresh items
@@ -96,146 +98,238 @@ const Menu = () => {
     }
   };
 
+  // New function to handle removing an item from the database
+  const handleRemoveItem = async (category, itemId) => {
+    try {
+      // Confirm before deletion
+      if (!confirm(`Are you sure you want to remove this item?`)) {
+        return;
+      }
+
+      const res = await fetch(`http://localhost:3000/admin/Menu/remove-item`, {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ itemId, category }),
+      });
+
+      if (!res.ok) throw new Error('Failed to remove item');
+
+      alert('Item removed successfully!');
+      fetchAllItems(); // Refresh items
+
+      // Also remove from today's menu if present
+      if (category === 'breakfast') {
+        setTodaysMenu(prev => ({
+          ...prev,
+          breakfast: prev.breakfast.filter(item => item.id !== itemId)
+        }));
+      } else if (category === 'lunch') {
+        setTodaysMenu(prev => ({
+          ...prev,
+          lunch: prev.lunch.filter(item => item.id !== itemId)
+        }));
+      } else if (category === 'dinner') {
+        setTodaysMenu(prev => ({
+          ...prev,
+          dinner: prev.dinner.filter(item => item.id !== itemId)
+        }));
+      }
+    } catch (err) {
+      alert(err.message);
+    }
+  };
+
   if (loading) return <p>Loading Menu items...</p>;
 
   return (
-    <div style={{ display: 'flex', height: '90vh', padding: '2rem' }}>
-      
-      {/* Left Side - Today's Menu */}
-      <div style={{ flex: 1, marginRight: '2rem' }}>
-        <h2>Today's Menu</h2>
+    <div className="menu-page">
+      <h2 className="table-heading">Menu Management</h2>
 
-        <div>
-          <h3>Breakfast</h3>
-          <ul>
-            {todaysMenu.breakfast.map((item, idx) => (
-              <li key={idx} style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '5px' }}>
-                {item.name}
-                <button onClick={() => removeFromTodaysMenu('breakfast', idx)} style={smallButtonStyle}>Remove</button>
-              </li>
-            ))}
-          </ul>
+      <div className="menu-layout">
+        {/* Left Side - Today's Menu */}
+        <div className="todays-menu">
+          <h2 className="section-heading">Today's Menu</h2>
+
+          <div className="meal-category">
+            <h3>Breakfast</h3>
+            <ul className="menu-list">
+              {todaysMenu.breakfast.map((item, idx) => (
+                <li key={idx} className="menu-list-item">
+                  {item.name}
+                  <button
+                    onClick={() => removeFromTodaysMenu('breakfast', idx)}
+                    className="btn-warning"
+                  >
+                    Remove
+                  </button>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          <div className="meal-category">
+            <h3>Lunch</h3>
+            <ul className="menu-list">
+              {todaysMenu.lunch.map((item, idx) => (
+                <li key={idx} className="menu-list-item">
+                  {item.name}
+                  <button
+                    onClick={() => removeFromTodaysMenu('lunch', idx)}
+                    className="btn-warning"
+                  >
+                    Remove
+                  </button>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          <div className="meal-category">
+            <h3>Dinner</h3>
+            <ul className="menu-list">
+              {todaysMenu.dinner.map((item, idx) => (
+                <li key={idx} className="menu-list-item">
+                  {item.name}
+                  <button
+                    onClick={() => removeFromTodaysMenu('dinner', idx)}
+                    className="btn-warning"
+                  >
+                    Remove
+                  </button>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          <button onClick={handleSaveMenu} className="btn-success">
+            Save Today's Menu
+          </button>
         </div>
 
-        <div>
-          <h3>Lunch</h3>
-          <ul>
-            {todaysMenu.lunch.map((item, idx) => (
-              <li key={idx} style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '5px' }}>
-                {item.name}
-                <button onClick={() => removeFromTodaysMenu('lunch', idx)} style={smallButtonStyle}>Remove</button>
-              </li>
-            ))}
-          </ul>
-        </div>
+        {/* Right Side - Available Items */}
+        <div className="available-items">
+          <h2 className="section-heading">Available Items</h2>
 
-        <div>
-          <h3>Dinner</h3>
-          <ul>
-            {todaysMenu.dinner.map((item, idx) => (
-              <li key={idx} style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '5px' }}>
-                {item.name}
-                <button onClick={() => removeFromTodaysMenu('dinner', idx)} style={smallButtonStyle}>Remove</button>
-              </li>
-            ))}
-          </ul>
-        </div>
+          <div className="item-category">
+            <h3>Breakfast Items</h3>
+            <div className="item-list">
+              {breakfastItems.map(item => (
+                <div key={item.id} className="item-row">
+                  <span>{item.name}</span>
+                  <div className="item-actions">
+                    <button
+                      onClick={() => addToTodaysMenu('breakfast', item)}
+                      className="btn-success"
+                    >
+                      ←
+                    </button>
+                    <button
+                      onClick={() => handleRemoveItem('breakfast', item.id)}
+                      className="btn-warning"
+                    >
+                      X
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+            <div className="new-item-form">
+              <input
+                type="text"
+                placeholder="New breakfast item"
+                value={newItemName.breakfast}
+                onChange={(e) => setNewItemName(prev => ({ ...prev, breakfast: e.target.value }))}
+              />
+              <button
+                onClick={() => handleAddNewItem('breakfast')}
+                className="btn-success"
+              >
+                Add Item
+              </button>
+            </div>
+          </div>
 
-        <div style={{ marginTop: '2rem' }}>
-          <button onClick={handleSaveMenu} style={buttonStyle}>Save Today's Menu</button>
+          <div className="item-category">
+            <h3>Lunch Items</h3>
+            <div className="item-list">
+              {lunchItems.map(item => (
+                <div key={item.id} className="item-row">
+                  <span>{item.name}</span>
+                  <div className="item-actions">
+                    <button
+                      onClick={() => addToTodaysMenu('lunch', item)}
+                      className="btn-success"
+                    >
+                      ←
+                    </button>
+                    <button
+                      onClick={() => handleRemoveItem('lunch', item.id)}
+                      className="btn-warning"
+                    >
+                      X
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+            <div className="new-item-form">
+              <input
+                type="text"
+                placeholder="New lunch item"
+                value={newItemName.lunch}
+                onChange={(e) => setNewItemName(prev => ({ ...prev, lunch: e.target.value }))}
+              />
+              <button
+                onClick={() => handleAddNewItem('lunch')}
+                className="btn-success"
+              >
+                Add Item
+              </button>
+            </div>
+          </div>
+
+          <div className="item-category">
+            <h3>Dinner Items</h3>
+            <div className="item-list">
+              {dinnerItems.map(item => (
+                <div key={item.id} className="item-row">
+                  <span>{item.name}</span>
+                  <div className="item-actions">
+                    <button
+                      onClick={() => addToTodaysMenu('dinner', item)}
+                      className="btn-success"
+                    >
+                      ←
+                    </button>
+                    <button
+                      onClick={() => handleRemoveItem('dinner', item.id)}
+                      className="btn-warning"
+                    >
+                      X
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+            <div className="new-item-form">
+              <input
+                type="text"
+                placeholder="New dinner item"
+                value={newItemName.dinner}
+                onChange={(e) => setNewItemName(prev => ({ ...prev, dinner: e.target.value }))}
+              />
+              <button
+                onClick={() => handleAddNewItem('dinner')}
+                className="btn-success"
+              >
+                Add Item
+              </button>
+            </div>
+          </div>
         </div>
       </div>
-
-      {/* Right Side - Available Items */}
-      <div style={{ flex: 1, overflowY: 'scroll', border: '1px solid #ccc', padding: '1rem' }}>
-        <h2>Available Items</h2>
-
-        {/* Breakfast Items */}
-        <h3>Breakfast Items</h3>
-        {breakfastItems.map(item => (
-          <div key={item.id} style={itemStyle}>
-            <span>{item.name}</span>
-            <button onClick={() => addToTodaysMenu('breakfast', item)} style={addButtonStyle}>Add</button>
-          </div>
-        ))}
-        <div style={{ marginTop: '1rem' }}>
-          <input 
-            type="text" 
-            placeholder="New breakfast item"
-            value={newItemName.breakfast}
-            onChange={(e) => setNewItemName(prev => ({ ...prev, breakfast: e.target.value }))}
-          />
-          <button onClick={() => handleAddNewItem('breakfast')}>Add Item</button>
-        </div>
-
-        <hr />
-
-        {/* Lunch Items */}
-        <h3>Lunch Items</h3>
-        {lunchItems.map(item => (
-          <div key={item.id} style={itemStyle}>
-            <span>{item.name}</span>
-            <button onClick={() => addToTodaysMenu('lunch', item)} style={addButtonStyle}>Add</button>
-          </div>
-        ))}
-        <div style={{ marginTop: '1rem' }}>
-          <input 
-            type="text" 
-            placeholder="New lunch item"
-            value={newItemName.lunch}
-            onChange={(e) => setNewItemName(prev => ({ ...prev, lunch: e.target.value }))}
-          />
-          <button onClick={() => handleAddNewItem('lunch')}>Add Item</button>
-        </div>
-
-        <hr />
-
-        {/* Dinner Items */}
-        <h3>Dinner Items</h3>
-        {dinnerItems.map(item => (
-          <div key={item.id} style={itemStyle}>
-            <span>{item.name}</span>
-            <button onClick={() => addToTodaysMenu('dinner', item)} style={addButtonStyle}>Add</button>
-          </div>
-        ))}
-        <div style={{ marginTop: '1rem' }}>
-          <input 
-            type="text" 
-            placeholder="New dinner item"
-            value={newItemName.dinner}
-            onChange={(e) => setNewItemName(prev => ({ ...prev, dinner: e.target.value }))}
-          />
-          <button onClick={() => handleAddNewItem('dinner')}>Add Item</button>
-        </div>
-
-      </div>
-
     </div>
   );
-};
-
-const buttonStyle = {
-  padding: '10px 20px',
-  fontSize: '16px',
-  marginTop: '10px'
-};
-
-const smallButtonStyle = {
-  padding: '4px 8px',
-  fontSize: '12px',
-  marginLeft: '10px'
-};
-
-const itemStyle = {
-  display: 'flex',
-  justifyContent: 'space-between',
-  alignItems: 'center',
-  padding: '5px 0'
-};
-
-const addButtonStyle = {
-  padding: '4px 8px',
-  fontSize: '14px'
 };
 
 export default Menu;

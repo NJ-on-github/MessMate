@@ -106,94 +106,57 @@ const MonthlyPaymentStatus = () => {
   const pendingPayments = payments.filter(p => p.payment_status === 'pending');
 
   return (
-    <div className="p-6">
-      <h2 className='table-heading'>Monthly Payment Status</h2>
+    <div className="content-wrapper">
+      <h2 className="table-heading">Monthly Payment Status</h2>
 
-      <div className="mb-6 bg-white p-4 rounded shadow">
-        <label className="block text-sm font-medium mb-2">Select Month:</label>
+      <div className="form-group">
+        <label className="form-label">Select Month:</label>
         <input
           type="month"
           value={month}
           onChange={(e) => setMonth(e.target.value)}
-          className="border px-3 py-2 rounded w-full sm:w-64"
+          className="form-input"
         />
       </div>
 
-      {loading && <p className="text-center py-4">Loading...</p>}
-      {error && <p className="text-red-600 py-2">{error}</p>}
-      {blockError && <p className="text-red-600 py-2">{blockError}</p>}
-      {blockSuccess && <p className="text-green-600 py-2">{blockSuccess}</p>}
+      {loading && <p className="message">Loading...</p>}
+      {error && <p className="message error">{error}</p>}
+      {blockError && <p className="message error">{blockError}</p>}
+      {blockSuccess && <p className="message success">{blockSuccess}</p>}
 
       {!loading && month && (
-        <div className="flex flex-col lg:flex-row gap-6">
-          {/* Paid Students */}
-          <div className="flex-1">
-            <h3 className="text-xl font-semibold mb-3 text-green-700">Paid Students</h3>
-            <div className="bg-white rounded shadow overflow-hidden">
-              {paidPayments.length === 0 ? (
-                <p className="p-4 text-gray-500">No students have paid for this month yet.</p>
-              ) : (
-                <div className="table-container"> 
-                <table className="w-full">
-                  <thead className="bg-green-50">
-                    <tr>
-                      <th className="p-3 text-left">Student Name</th>
-                      <th className="p-3 text-left">Email</th>
-                      <th className="p-3 text-left">Amount</th>
-                      <th className="p-3 text-left">Payment Date</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {paidPayments.map((payment) => (
-                      <tr key={payment.payment_id} className="border-t hover:bg-green-50">
-                        <td className="p-3">{payment.name}</td>
-                        <td className="p-3">{payment.email}</td>
-                        <td className="p-3">₹{payment.amount}</td>
-                        <td className="p-3">{new Date(payment.payment_date).toLocaleDateString()}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-                </div>
-              )}
-            </div>
-          </div>
-
-          {/* Defaulters */}
-          <div className="flex-1">
-            <h3 className="text-xl font-semibold mb-3 text-red-700">Defaulters</h3>
-            <div className="bg-white rounded shadow overflow-hidden">
+        <>
+          {/* Defaulters Section */}
+          <div className="section">
+            <h3 className="section-heading warning">Defaulters</h3>
+            <div className="table-container">
               {pendingPayments.length === 0 ? (
-                <p className="p-4 text-gray-500">No defaulters for this month.</p>
+                <p className="empty-message">No defaulters for this month.</p>
               ) : (
-                <table className="w-full">
-                  <thead className="bg-red-50">
+                <table>
+                  <thead>
                     <tr>
-                      <th className="p-3 text-left">Student Name</th>
-                      <th className="p-3 text-left">Email</th>
-                      <th className="p-3 text-left">Amount</th>
-                      <th className="p-3 text-left">Actions</th>
+                      <th>Student Name</th>
+                      <th>Email</th>
+                      <th>Amount</th>
+                      <th>Actions</th>
                     </tr>
                   </thead>
                   <tbody>
                     {pendingPayments.map((payment) => (
-                      <tr key={payment.payment_id} className="border-t hover:bg-red-50">
-                        <td className="p-3">{payment.name}</td>
-                        <td className="p-3">{payment.email}</td>
-                        <td className="p-3">₹{payment.amount}</td>
-                        <td className="p-3">
+                      <tr key={payment.payment_id}>
+                        <td>{payment.name}</td>
+                        <td>{payment.email}</td>
+                        <td>₹{payment.amount}</td>
+                        <td>
                           <button
-                            onClick={() => handleBlockStudent(payment.student_id)}
-                            disabled={!isPastDueDate() || blockingStudentId === payment.student_id}
-                            className={`px-3 py-1 rounded text-white ${
-                              isPastDueDate() 
-                                ? 'bg-red-600 hover:bg-red-700' 
-                                : 'bg-gray-400 cursor-not-allowed'
-                            }`}
-                            title={!isPastDueDate() ? "Cannot block until after the due date (10th)" : ""}
-                          >
-                            {blockingStudentId === payment.student_id ? 'Blocking...' : 'Block Student'}
-                          </button>
+  onClick={() => handleBlockStudent(payment.student_id)}
+  disabled={!isPastDueDate() || blockingStudentId === payment.student_id}
+  className={`${isPastDueDate() ? 'btn-warning' : 'btn-warning-disabled'}`}
+  title={!isPastDueDate() ? "Cannot block until after the due date (10th)" : ""}
+>
+  {blockingStudentId === payment.student_id ? 'Blocking...' : 'Block Student'}
+</button>
                         </td>
                       </tr>
                     ))}
@@ -202,42 +165,71 @@ const MonthlyPaymentStatus = () => {
               )}
             </div>
           </div>
-        </div>
+
+          {/* Paid Students Section */}
+          <div className="section">
+            <h3 className="section-heading success">Paid Students</h3>
+            <div className="table-container">
+              {paidPayments.length === 0 ? (
+                <p className="empty-message">No students have paid for this month yet.</p>
+              ) : (
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Student Name</th>
+                      <th>Email</th>
+                      <th>Amount</th>
+                      <th>Payment Date</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {paidPayments.map((payment) => (
+                      <tr key={payment.payment_id}>
+                        <td>{payment.name}</td>
+                        <td>{payment.email}</td>
+                        <td>₹{payment.amount}</td>
+                        <td>{new Date(payment.payment_date).toLocaleDateString()}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              )}
+            </div>
+          </div>
+
+          {/* Blocked Students Section */}
+          <div className="section">
+            <h3 className="section-heading error">Blocked Students</h3>
+            <div className="table-container">
+              {blockedStudents.length === 0 ? (
+                <p className="empty-message">No students are currently blocked.</p>
+              ) : (
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Student Name</th>
+                      <th>Email</th>
+                      <th>Blocked Reason</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {blockedStudents.map((student) => (
+                      <tr key={student.student_id}>
+                        <td>{student.name}</td>
+                        <td>{student.email}</td>
+                        <td>{student.blocked_reason || 'No reason provided'}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              )}
+            </div>
+          </div>
+        </>
       )}
 
-      {/* Blocked Students List */}
-      <div className="mt-6">
-        <h3 className="text-xl font-semibold mb-3 text-red-700">Blocked Students</h3>
-        <div className="bg-white rounded shadow overflow-hidden">
-          {blockedStudents.length === 0 ? (
-            <p className="p-4 text-gray-500">No students are currently blocked.</p>
-          ) : (
-            <table className="w-full">
-              <thead className="bg-red-50">
-                <tr>
-                  <th className="p-3 text-left">Student Name</th>
-                  <th className="p-3 text-left">Email</th>
-                  <th className="p-3 text-left">Blocked Reason</th>
-                </tr>
-              </thead>
-              <tbody>
-                {blockedStudents.map((student) => (
-                  <tr key={student.student_id} className="border-t hover:bg-red-50">
-                    <td className="p-3">{student.name}</td>
-                    <td className="p-3">{student.email}</td>
-                    <td className="p-3">{student.blocked_reason || 'No reason provided'}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          )}
-        </div>
-      </div>
-
       {!loading && !month && (
-        <div className="text-center py-10 text-gray-500">
-          Please select a month to view payment status
-        </div>
+        <p className="message">Please select a month to view payment status</p>
       )}
     </div>
   );

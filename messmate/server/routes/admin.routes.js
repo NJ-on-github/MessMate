@@ -115,6 +115,29 @@ router.patch('/reject-registration/:id', async (req, res) => {
   }
 });
 
+//registration - blocked registrations
+router.get('/blocked-registrations', async (req, res) => {
+  try {
+    const result = await pool.query(queries.GET_BLOCKED_REGISTRATIONS);
+    res.json(result.rows);
+  } catch (err) {
+    console.error('Error fetching blocked registrations:', err.message);
+    res.status(500).json({ error: 'Failed to fetch blocked registrations.' });
+  }
+});
+
+router.patch('/unblock-registration/:id', async (req, res) => {
+  try {
+    await pool.query(queries.UNBLOCK_REGISTRATION, [req.params.id]);
+    res.json({ message: "Registration status updated to pending successfully." });
+  } catch (err) {
+    console.error('Error unblocking registration:', err.message);
+    res.status(500).json({ error: 'Failed to unblock registration.' });
+  }
+});
+
+
+
 // router.patch('/block-student/:id', async (req, res) => {
 //   // console.log(req.body);
 //   const reason = req.body.reason || 'Unpaid dues';
@@ -615,6 +638,65 @@ router.patch('/payments/update-payments/:payment_id', async (req, res) => {
   } catch (err) {
     console.error('Error updating payment:', err.message);
     res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
+
+// MENU
+router.delete('/Menu/remove-item', async (req, res) => {
+  const { itemId, category } = req.body;
+  
+  if (!itemId || !category) {
+    return res.status(400).json({ error: 'Item ID and category are required' });
+  }
+  
+  const client = await pool.connect();
+  
+  try {
+    await client.query('BEGIN');
+    
+    let deleteQuery;
+    let todaysMenuDeleteQuery;
+    
+    // Set appropriate queries based on category
+    if (category === 'breakfast') {
+      deleteQuery = queries.DELETE_BREAKFAST_ITEM;
+      todaysMenuDeleteQuery = queries.DELETE_FROM_TODAYS_BREAKFAST;
+    } else if (category === 'lunch') {
+      deleteQuery = queries.DELETE_LUNCH_ITEM;
+      todaysMenuDeleteQuery = queries.DELETE_FROM_TODAYS_LUNCH;
+    } else if (category === 'dinner') {
+      deleteQuery = queries.DELETE_DINNER_ITEM;
+      todaysMenuDeleteQuery = queries.DELETE_FROM_TODAYS_DINNER;
+    } else {
+      await client.query('ROLLBACK');
+      return res.status(400).json({ error: 'Invalid category' });
+    }
+    
+    // First remove the item from today's menu if it exists
+    await client.query(todaysMenuDeleteQuery, [itemId]);
+    
+    // Then delete the item from the main items table
+    const result = await client.query(deleteQuery, [itemId]);
+    
+    if (result.rowCount === 0) {
+      await client.query('ROLLBACK');
+      return res.status(404).json({ error: 'Item not found' });
+    }
+    
+    await client.query('COMMIT');
+    
+    return res.status(200).json({ 
+      message: 'Item deleted successfully',
+      deletedItem: result.rows[0]
+    });
+    
+  } catch (err) {
+    await client.query('ROLLBACK');
+    console.error(`Error deleting menu item:`, err);
+    return res.status(500).json({ error: 'Failed to delete item' });
+  } finally {
+    client.release();
   }
 });
 

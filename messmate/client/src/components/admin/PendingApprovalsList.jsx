@@ -32,33 +32,43 @@ const PendingApprovalsList = () => {
     }, [])
 
 
-    const approveRegistration = async (studentId) => {
-        try {
-            const response = await fetch(`http://localhost:3000/admin/approve-registration/${studentId}`, {
-                method: 'PATCH'
-            });
-            if (!response.ok) {
-                throw new Error('Failed to approve registration');
+    const approveRegistration = async (studentId, studentName) => {
+        const isConfirmed = window.confirm(`Are you sure you want to approve ${studentName}'s registration?`);
+        
+        if (isConfirmed) {
+            try {
+                const response = await fetch(`http://localhost:3000/admin/approve-registration/${studentId}`, {
+                    method: 'PATCH'
+                });
+                if (!response.ok) {
+                    throw new Error('Failed to approve registration');
+                }
+                fetchPendingApprovals(); // Refresh the list after approval
+            } catch (err) {
+                setError(err.message);
             }
-            fetchPendingApprovals(); // Refresh the list after approval
-        } catch (err) {
-            setError(err.message);
-        }
-    };
-    const rejectRegistration = async (studentId) => {
-        try {
-            const response = await fetch(`http://localhost:3000/admin/reject-registration/${studentId}`, {
-                method: 'PATCH'
-            });
-            if (!response.ok) {
-                throw new Error('Failed to reject registration');
-            }
-            fetchPendingApprovals(); // Refresh the list after approval
-        } catch (err) {
-            setError(err.message);
         }
     };
 
+    const rejectRegistration = async (studentId, studentName) => {
+        const isConfirmed = window.confirm(`Are you sure you want to reject ${studentName}'s registration?`);
+        
+        if (isConfirmed) {
+            try {
+                const response = await fetch(`http://localhost:3000/admin/reject-registration/${studentId}`, {
+                    method: 'PATCH'
+                });
+                if (!response.ok) {
+                    throw new Error('Failed to reject registration');
+                }
+                fetchPendingApprovals(); // Refresh the list after rejection
+            } catch (err) {
+                setError(err.message);
+            }
+        }
+    };
+
+    
 
     return (
         <div>
@@ -67,7 +77,7 @@ const PendingApprovalsList = () => {
             <table>
                 <thead>
                     <tr>
-                        <th>ID</th>
+                        <th>Student ID</th>
                         <th>Name</th>
                         <th>Email</th>
                         <th>Hostel</th>
@@ -80,30 +90,32 @@ const PendingApprovalsList = () => {
                 {error && <div>Error: {error}</div>}
                 {loading && <div>Loading...</div>}
                 <tbody>
-                    {receivedData.map((student) => (
-                        <tr key={student.student_id}>
-                            <td>{student.student_id}</td>
-                            <td>{student.name}</td>
-                            <td>{student.email}</td>
-                            <td>{student.hostel_name}</td>
-                            <td>{student.branch}</td>
-                            <td><button className='btn-warning' onClick={() => {
-                                rejectRegistration(student.student_id)
-                                fetchPendingApprovals()
-                            }}>
+                {receivedData.map((student) => (
+                    <tr key={student.student_id}>
+                        <td>{student.student_id}</td>
+                        <td>{student.name}</td>
+                        <td>{student.email}</td>
+                        <td>{student.hostel_name}</td>
+                        <td>{student.branch}</td>
+                        <td>
+                            <button 
+                                className='btn-warning' 
+                                onClick={() => rejectRegistration(student.student_id, student.name)}
+                            >
                                 Reject
                             </button>
-                            </td>
-                            <td><button className='btn-success' onClick={() => {
-                                approveRegistration(student.student_id);
-                                fetchPendingApprovals()
-                            }}>
+                        </td>
+                        <td>
+                            <button 
+                                className='btn-success' 
+                                onClick={() => approveRegistration(student.student_id, student.name)}
+                            >
                                 Approve
                             </button>
-                            </td>
-                        </tr>
-                    ))}
-                </tbody>
+                        </td>
+                    </tr>
+                ))}
+            </tbody>
             </table>
             </div>
             {receivedData.length === 0 && <div>No pending approvals found</div>}

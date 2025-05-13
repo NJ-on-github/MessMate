@@ -98,6 +98,19 @@ const APPROVE_REGISTRATION = `
 UPDATE students SET registration_status = 'approved' WHERE student_id = $1;
 `;
 
+// ADMIN - Registrations - Rejected Approvals
+const GET_BLOCKED_REGISTRATIONS = `
+  SELECT s.student_id, u.name, u.email, s.hostel_name, s.branch, s.registration_status
+  FROM students s
+  JOIN users u ON s.user_id = u.user_id
+  WHERE s.registration_status = 'rejected'
+  ORDER BY s.student_id ASC;
+`;
+const UNBLOCK_REGISTRATION = `
+  UPDATE students SET registration_status = 'pending' WHERE student_id = $1;
+`;
+
+
 const BLOCK_REGISTRATION = `
 UPDATE students SET registration_status = 'blocked' WHERE student_id = $1;
 `;
@@ -148,7 +161,7 @@ WITH months AS (
     WHERE student_id = $1 
     AND month_year = to_char(af.month_date, 'MM/YYYY')
     )`;
-    
+
 // const INITIALIZE_STUDENT_PAYMENTS = `
 //   INSERT INTO payments (student_id, fee_id, amount, payment_status, month_year)
 // SELECT 
@@ -217,7 +230,7 @@ const GET_SET_FEES_BY_MONTH = `
   SELECT * FROM fees_structure WHERE effective_from = $1;
   `;
 
- const createPaymentsForNewFee = `
+const createPaymentsForNewFee = `
     INSERT INTO payments (
         student_id,
         fee_id,
@@ -333,49 +346,98 @@ const GET_TODAYS_DINNER = `
   WHERE td.todays_menu_id = $1;
 `;
 
+// Delete menu item queries
+
+// Delete breakfast item
+const DELETE_BREAKFAST_ITEM = `
+  DELETE FROM breakfast_items 
+  WHERE id = $1
+  RETURNING *;
+`;
+
+// Delete lunch item
+const DELETE_LUNCH_ITEM = `
+  DELETE FROM lunch_items 
+  WHERE id = $1
+  RETURNING *;
+`;
+
+// Delete dinner item 
+const DELETE_DINNER_ITEM = `
+  DELETE FROM dinner_items 
+  WHERE id = $1
+  RETURNING *;
+`;
+
+// Also delete from today's menu if present
+const DELETE_FROM_TODAYS_BREAKFAST = `
+  DELETE FROM todays_breakfast
+  WHERE breakfast_item_id = $1
+  AND todays_menu_id IN (SELECT id FROM todays_menu WHERE menu_date = CURRENT_DATE);
+`;
+
+const DELETE_FROM_TODAYS_LUNCH = `
+  DELETE FROM todays_lunch
+  WHERE lunch_item_id = $1
+  AND todays_menu_id IN (SELECT id FROM todays_menu WHERE menu_date = CURRENT_DATE);
+`;
+
+const DELETE_FROM_TODAYS_DINNER = `
+  DELETE FROM todays_dinner
+  WHERE dinner_item_id = $1
+  AND todays_menu_id IN (SELECT id FROM todays_menu WHERE menu_date = CURRENT_DATE);
+`;
 
 module.exports = {
   createPaymentsForNewFee,
-    MATCH_ADMIN_LOGIN,
-    INSERT_USER,
-    INSERT_STUDENT,
-    INSERT_ACCOUNT_STATUS,
-    LOGIN_FIND_USER,
-    LOGIN_FIND_STUDENT_BY_USER_ID,
-    LOGIN_CHECK_ACCOUNT_BLOCK,
-    COUNT_PENDING_REGISTRATIONS,
-    COUNT_PENDING_PAYMENTS_THIS_MONTH,
-    GET_ALL_STUDENTS,
-    GET_BLOCKED_STUDENTS,
-    UNBLOCK_STUDENT,
-    APPROVE_REGISTRATION,
-    BLOCK_REGISTRATION,
-    INITIALIZE_STUDENT_PAYMENTS,
-    REJECT_REGISTRATION,
-    BLOCK_STUDENT,
-    GET_PENDING_REGISTRATIONS,
-    GET_PENDING_PAYMENTS_BY_MONTH,
-    INSERT_FEE,
-    GET_ALL_FEES,
-    GET_SET_FEES_BY_MONTH,
-    GET_ALL_PAYMENTS,
-    GET_PENDING_PAYMENTS,
-    INSERT_TODAYS_MENU,
-    INSERT_TODAYS_BREAKFAST,
-    INSERT_TODAYS_LUNCH,
-    INSERT_TODAYS_DINNER,
-    GET_MENU_BY_DATE,
-    GET_STUDENT_PAYMENTS,
-    CHECK_CURRENT_MONTH_PAYMENT,
-    GET_STUDENT_DASHBOARD_DATA,
-    GET_BREAKFAST_ITEMS,
-    GET_LUNCH_ITEMS,
-    GET_DINNER_ITEMS,
-    ADD_BREAKFAST_ITEM,
-    ADD_LUNCH_ITEM,
-    ADD_DINNER_ITEM,
-    GET_TODAYS_MENU_ID,
-    GET_TODAYS_BREAKFAST,
-    GET_TODAYS_LUNCH,
-    GET_TODAYS_DINNER,
+  MATCH_ADMIN_LOGIN,
+  INSERT_USER,
+  INSERT_STUDENT,
+  INSERT_ACCOUNT_STATUS,
+  LOGIN_FIND_USER,
+  LOGIN_FIND_STUDENT_BY_USER_ID,
+  LOGIN_CHECK_ACCOUNT_BLOCK,
+  COUNT_PENDING_REGISTRATIONS,
+  COUNT_PENDING_PAYMENTS_THIS_MONTH,
+  GET_ALL_STUDENTS,
+  GET_BLOCKED_REGISTRATIONS,
+  UNBLOCK_REGISTRATION,
+  GET_BLOCKED_STUDENTS,
+  UNBLOCK_STUDENT,
+  APPROVE_REGISTRATION,
+  BLOCK_REGISTRATION,
+  INITIALIZE_STUDENT_PAYMENTS,
+  REJECT_REGISTRATION,
+  BLOCK_STUDENT,
+  GET_PENDING_REGISTRATIONS,
+  GET_PENDING_PAYMENTS_BY_MONTH,
+  INSERT_FEE,
+  GET_ALL_FEES,
+  GET_SET_FEES_BY_MONTH,
+  GET_ALL_PAYMENTS,
+  GET_PENDING_PAYMENTS,
+  INSERT_TODAYS_MENU,
+  INSERT_TODAYS_BREAKFAST,
+  INSERT_TODAYS_LUNCH,
+  INSERT_TODAYS_DINNER,
+  GET_MENU_BY_DATE,
+  GET_STUDENT_PAYMENTS,
+  CHECK_CURRENT_MONTH_PAYMENT,
+  GET_STUDENT_DASHBOARD_DATA,
+  GET_BREAKFAST_ITEMS,
+  GET_LUNCH_ITEMS,
+  GET_DINNER_ITEMS,
+  ADD_BREAKFAST_ITEM,
+  ADD_LUNCH_ITEM,
+  ADD_DINNER_ITEM,
+  GET_TODAYS_MENU_ID,
+  GET_TODAYS_BREAKFAST,
+  GET_TODAYS_LUNCH,
+  GET_TODAYS_DINNER,
+  DELETE_BREAKFAST_ITEM,
+  DELETE_LUNCH_ITEM,
+  DELETE_DINNER_ITEM,
+  DELETE_FROM_TODAYS_BREAKFAST,
+  DELETE_FROM_TODAYS_LUNCH,
+  DELETE_FROM_TODAYS_DINNER
 };

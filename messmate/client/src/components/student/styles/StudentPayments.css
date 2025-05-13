@@ -1,0 +1,117 @@
+@import url('../../common/common.css');
+
+.payments-container {
+    padding: var(--space-lg);
+}
+
+.payments-heading {
+    font-size: 2rem;
+    font-weight: 600;
+    color: var(--text-dark);
+    margin-bottom: var(--space-lg);
+}
+
+.payments-list {
+    display: grid;
+    gap: var(--space-md);
+}
+
+.payment-card {
+    display: flex;
+    align-items: center;
+    background-color: var(--col-white-100);
+    padding: var(--space-lg);
+    border-radius: var(--space-sm);
+    border: 1px solid var(--col-gray-200);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.status-indicator {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    margin-right: var(--space-md);
+}
+
+.status-indicator.paid {
+    background-color: var(--color-success);
+}
+
+.status-indicator.pending {
+    background-color: var(--color-warning);
+}
+
+.payment-info h3 {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: black;
+    margin-bottom: var(--space-2);
+}
+
+.payment-info p {
+    color: var(--col-gray-600);
+    margin-bottom: var(--space-2);
+}
+
+.status-text {
+    font-weight: 500;
+    text-transform: capitalize;
+}
+
+.status-text.paid {
+    color: var(--col-success-dark);
+}
+
+.status-text.pending {
+    color: var(--col-warning-dark);
+}
+
+/* ...existing styles... */
+
+.status-text {
+    font-weight: 500;
+    padding: var(--space-1) var(--space-2);
+    border-radius: var(--space-1);
+    display: inline-block;
+}
+
+.status-text.status-paid {
+    color: var(--col-success-dark);
+    background-color: var(--col-success-light);
+}
+
+.status-text.status-pending {
+    color: var(--color-warning);
+    /* background-color: var(--col-warning-light); */
+}
+
+/* ...existing styles... */
+
+.payment-card {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    background-color: var(--col-white-100);
+    padding: var(--space-4);
+    border-radius: var(--space-2);
+    border: 1px solid var(--col-gray-200);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    margin-bottom: var(--space-3);
+}
+
+.status-indicator {
+    min-width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
+/* Status indicator colors */
+.status-indicator.paid {
+    background-color: var(--color-success);
+}
+
+.status-indicator.pending {
+    background-color: var(--color-warning);
+}
+
