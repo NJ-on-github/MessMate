@@ -99,3 +99,28 @@
     width: 40px;
     height: 40px;
 }
+
+.logout-section {
+    margin-top: auto;
+    padding: var(--space-4);
+    border-top: 1px solid var(--col-gray-200);
+}
+
+.logout-link {
+    width: 100%;
+    padding: var(--space-3);
+    color: var(--color-error);
+    background: none;
+    border: none;
+    cursor: pointer;
+    text-align: left;
+    font-size: 1rem;
+    display: flex;
+    align-items: center;
+    transition: all 0.2s ease;
+}
+
+.logout-link:hover {
+    background-color: var(--col-error-light);
+    border-radius: var(--space-1);
+}

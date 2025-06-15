@@ -5,6 +5,7 @@ import './styles/StudentLogin.css'
 import "../common/table.css";
 import "../common/common.css";
 import "../common/form.css";
+
 const StudentLogin = () => {
   const [formData, setFormData] = useState({ email: '', password: '' });
   const [error, setError] = useState({ message: '', subMessage: '', showForm: true });
@@ -14,55 +15,73 @@ const StudentLogin = () => {
       const { name, value } = e.target;
       setFormData(prev => ({ ...prev, [name]: value }));
   };
+const handleSubmit = async (e) => {
+  e.preventDefault();
+  
+  try {
+    const response = await fetch('http://localhost:3000/student/login', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(formData)
+    });
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+    const data = await response.json();
 
-    try {
-      const res = await fetch('http://localhost:3000/student/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData)
-      });
+    if (response.ok) {
+      // Store student data in localStorage
+      localStorage.setItem('studentId', data.studentId);
+      localStorage.setItem('studentName', data.name);
+      localStorage.setItem('studentEmail', data.email);
+      localStorage.setItem('isStudentLoggedIn', 'true');
 
-      const data = await res.json();
-
-      if (res.ok) {
-        // Save student ID and name locally (you can use context later)
-        localStorage.setItem('studentId', data.studentId);
-        localStorage.setItem('studentName', data.name);
-        navigate(`/student/dashboard/${data.studentId}`);
-      } else {
-        // Handle different error types
-        if (data.error === "pending") {
+      // Redirect to dashboard
+      navigate(`/student/dashboard/${data.studentId}`);
+    } else {
+      // Handle specific error cases
+      switch (data.error) {
+        case 'pending':
           setError({
-            message: "Account Pending Approval",
-            subMessage: "Your registration is pending admin approval. Please check back later.",
+            message: 'Account Pending Approval',
+            subMessage: 'Your registration is pending admin approval. Please check back later.',
             showForm: false
           });
-        } else if (data.error === "blocked") {
+          break;
+
+        case 'blocked':
           setError({
-            message: "Account Blocked",
-            subMessage: data.message || "Your account has been blocked. Please contact the admin.",
+            message: 'Account Blocked',
+            subMessage: data.message || 'Your account has been blocked. Please contact the admin.',
             showForm: false
           });
-        } else {
+          break;
+
+        case 'invalid_credentials':
           setError({
-            message: data.error || 'Login failed',
+            message: 'Invalid email or password',
             subMessage: '',
             showForm: true
           });
-        }
+          break;
+
+        default:
+          setError({
+            message: data.error || 'Login failed',
+            subMessage: 'Please try again',
+            showForm: true
+          });
       }
-    } catch (err) {
-      console.error(err);
-      setError({
-        message: 'Something went wrong',
-        subMessage: 'Please try again later',
-        showForm: true
-      });
     }
-  };
+  } catch (err) {
+    console.error('Login error:', err);
+    setError({
+      message: 'Connection error',
+      subMessage: 'Please check your internet connection and try again',
+      showForm: true
+    });
+  }
+};
 
   // If we have a major error that should replace the form
   if (!error.showForm) {
@@ -109,6 +128,12 @@ const StudentLogin = () => {
           </div>
 
           <button className="login-btn" type="submit">Login</button>
+
+          
+          <div className="register-prompt">
+            <p>Haven't Registered yet?</p>
+            <Link to="/student/register" className="register-link">Register Here</Link>
+          </div>
         </form>
 
         {error.message && (

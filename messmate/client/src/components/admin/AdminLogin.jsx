@@ -19,29 +19,28 @@ const AdminLogin = () => {
   };
 
   const handleLogin = async (e) => {
-    e.preventDefault();
+  e.preventDefault();
+  try {
+    const res = await fetch('http://localhost:3000/admin/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(adminData)
+    });
 
-    try {
-      const res = await fetch('http://localhost:3000/admin/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(adminData)
-      });
+    const data = await res.json();
 
-      const data = await res.json();
-
-      if (res.ok) {
-        setMessage('Admin login successful!');
-        localStorage.setItem('adminId', data.adminId); // Save adminId if you return it
-        navigate('/admin/dashboard'); // Redirect to admin dashboard or another page
-      } else {
-        setMessage(data.error || 'Login failed.');
-      }
-    } catch (err) {
-      console.error(err);
-      setMessage('Something went wrong. Please try again.');
+    if (res.ok) {
+      localStorage.setItem('adminId', data.adminId);
+      localStorage.setItem('adminName', data.name);
+      navigate('/admin/dashboard');
+    } else {
+      setMessage(data.error || 'Login failed.');
     }
-  };
+  } catch (err) {
+    console.error(err);
+    setMessage('Something went wrong. Please try again.');
+  }
+};
 
   return (
     <div className="center-all">

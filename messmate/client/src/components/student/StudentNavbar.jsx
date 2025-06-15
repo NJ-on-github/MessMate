@@ -7,6 +7,18 @@ import { useParams } from 'react-router-dom'
 const Navbar = () => {
     const [isExpanded, setIsExpanded] = useState(false);
     const { studentId } = useParams();
+
+    const handleLogout = () => {
+        // Clear all student-related data from localStorage
+        localStorage.removeItem('studentId');
+        localStorage.removeItem('studentName');
+        localStorage.removeItem('studentEmail');
+        localStorage.removeItem('isStudentLoggedIn');
+
+        // Redirect to home page
+        navigate('/');
+    };
+    
     return (
         <div className={`sidebar ${isExpanded ? 'expanded' : 'collapsed'}`}
       onMouseEnter={() => setIsExpanded(true)}
@@ -27,7 +39,11 @@ const Navbar = () => {
             <NavLink className={'nav-link'}to={`/student/payments/${studentId}`} >
                 Payments
             </NavLink>
-            {/* <NavLink to="/student/payments" className={({ isActive }) => { isActive ? "active-navbar-component" : "" }}>Payments</NavLink> */}
+            <div className="logout-section">
+          <button onClick={handleLogout} className="logout-link">
+            Logout
+          </button>
+        </div>
 </div>
         </div>
     )

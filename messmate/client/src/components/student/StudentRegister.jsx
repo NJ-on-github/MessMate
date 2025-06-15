@@ -44,38 +44,48 @@ const StudentRegister = () => {
     };
 
     return (
-        <div style={{ maxWidth: '400px', margin: '2rem auto' }}>
-            <h2>Student Registration</h2>
-            <form onSubmit={handleSubmit}>
-                <div style={formGroup}>
-                    <label>Name:</label>
-                    <input type="text" name="name" value={formData.name} onChange={handleChange} required />
+        <div>
+            <div className="center-all">
+
+                <div className='form-container'>
+
+
+                    <div className="form-header">
+
+                        <h2>Student Registration</h2>
+                    </div>
+
+                    <form onSubmit={handleSubmit}>
+                        <div style={formGroup}>
+                            <label>Name:</label>
+                            <input type="text" name="name" value={formData.name} onChange={handleChange} required />
+                        </div>
+
+                        <div style={formGroup}>
+                            <label>Email:</label>
+                            <input type="email" name="email" value={formData.email} onChange={handleChange} required />
+                        </div>
+
+                        <div style={formGroup}>
+                            <label>Password:</label>
+                            <input type="password" name="password" value={formData.password} onChange={handleChange} required />
+                        </div>
+
+                        <div style={formGroup}>
+                            <label>Hostel Name:</label>
+                            <input type="text" name="hostel_name" value={formData.hostel_name} onChange={handleChange} required />
+                        </div>
+
+                        <div style={formGroup}>
+                            <label>Branch:</label>
+                            <input type="text" name="branch" value={formData.branch} onChange={handleChange} required />
+                        </div>
+
+                        <button className='login-btn' type="submit" >Register</button>
+                    </form>
                 </div>
-
-                <div style={formGroup}>
-                    <label>Email:</label>
-                    <input type="email" name="email" value={formData.email} onChange={handleChange} required />
-                </div>
-
-                <div style={formGroup}>
-                    <label>Password:</label>
-                    <input type="password" name="password" value={formData.password} onChange={handleChange} required />
-                </div>
-
-                <div style={formGroup}>
-                    <label>Hostel Name:</label>
-                    <input type="text" name="hostel_name" value={formData.hostel_name} onChange={handleChange} required />
-                </div>
-
-                <div style={formGroup}>
-                    <label>Branch:</label>
-                    <input type="text" name="branch" value={formData.branch} onChange={handleChange} required />
-                </div>
-
-                <button type="submit" style={buttonStyle}>Register</button>
-            </form>
-
-            {message && <p style={{ marginTop: '1rem', color: 'green' }}>{message}</p>}
+                {message && <p style={{ marginTop: '1rem', color: 'green' }}>{message}</p>}
+            </div>
         </div>
     );
 };
