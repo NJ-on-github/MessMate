@@ -1,0 +1,165 @@
+/* Landing Page Styles */
+
+.landing-container {
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    z-index: 1;
+    padding: var(--space-4);
+}
+
+.landing-card {
+    background: var(--col-white-100);
+    padding: 3rem 2.5rem;
+    border-radius: var(--space-md);
+    box-shadow: 0 8px 32px rgba(7, 34, 75, 0.15);
+    text-align: center;
+    width: 100%;
+    max-width: 420px;
+    position: relative;
+    animation: fadeIn 0.8s ease-out;
+    border: 1px solid var(--col-white-300);
+}
+
+.landing-heading {
+    margin-bottom: 2.5rem;
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--col-secondary-500);
+    text-shadow: 0 1px 2px rgba(7, 34, 75, 0.1);
+}
+
+.landing-button-container {
+    display: flex;
+    gap: var(--space-4);
+    margin-bottom: 2rem;
+    flex-wrap: wrap;
+}
+
+.landing-role-button {
+    flex: 1;
+    min-width: 140px;
+    padding: 1.5rem var(--space-3);
+    /* Fixed: Use gradient for both states to prevent flash */
+    background: linear-gradient(135deg, 
+        var(--col-secondary-500) 0%, 
+        var(--col-secondary-500) 50%, 
+        var(--col-secondary-600) 100%);
+    color: var(--col-white-100);
+    border: none;
+    border-radius: var(--space-md);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 16px rgba(7, 34, 75, 0.25);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-3);
+    font-size: 1.1rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    position: relative;
+    overflow: hidden;
+}
+
+.landing-role-button:hover {
+    /* Fixed: Similar gradient structure to prevent flash */
+    background: linear-gradient(135deg, 
+        var(--col-secondary-400) 0%, 
+        var(--col-secondary-300) 50%, 
+        var(--col-secondary-500) 100%);
+    box-shadow: 0 6px 24px rgba(7, 34, 75, 0.35);
+    transform: translateY(-2px);
+}
+
+.landing-role-button:active {
+    transform: translateY(0);
+    box-shadow: 0 4px 16px rgba(7, 34, 75, 0.25);
+}
+
+.landing-role-icon {
+    width: 3rem;
+    height: 3rem;
+    filter: brightness(0) invert(1);
+    transition: all 0.3s ease;
+    opacity: 0.9;
+}
+
+.landing-role-button:hover .landing-role-icon {
+    transform: scale(1.05);
+    opacity: 1;
+}
+
+.landing-small-text {
+    font-size: 1rem;
+    color: var(--col-gray-600);
+    font-weight: 500;
+    margin-top: var(--space-2);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .landing-container {
+        padding: var(--space-3);
+    }
+    
+    .landing-card {
+        padding: 2rem 1.5rem;
+        max-width: 100%;
+        margin: 0 var(--space-2);
+    }
+    
+    .landing-heading {
+        font-size: 1.75rem;
+        margin-bottom: 2rem;
+    }
+    
+    .landing-button-container {
+        flex-direction: column;
+        gap: var(--space-3);
+    }
+    
+    .landing-role-button {
+        min-width: unset;
+        padding: 1.25rem var(--space-3);
+        font-size: 1rem;
+    }
+    
+    .landing-role-icon {
+        width: 40px;
+        height: 40px;
+    }
+}
+
+@media (max-width: 480px) {
+    .landing-container {
+        padding: var(--space-2);
+    }
+    
+    .landing-card {
+        padding: 1.5rem 1rem;
+    }
+    
+    .landing-heading {
+        font-size: 1.5rem;
+        margin-bottom: 1.5rem;
+    }
+    
+    .landing-role-button {
+        padding: 1rem var(--space-2);
+        gap: var(--space-2);
+    }
+    
+    .landing-role-icon {
+        width: 2.25rem;
+        height: 2.25rem;
+    }
+    
+    .landing-small-text {
+        font-size: 0.9rem;
+    }
+}

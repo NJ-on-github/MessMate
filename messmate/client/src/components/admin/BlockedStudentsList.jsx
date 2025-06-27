@@ -1,12 +1,27 @@
-import React from 'react'
-import { useState } from 'react';
-import { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import "../common/table.css";
 import "../common/common.css";
+import ConfirmDialog from "../common/ConfirmDialog";
 
 const BlockedStudentsList = () => {
     const [blockedStudents, setBlockedStudents] = useState([]);
     const [error, setError] = useState(null);
+    const [dialog, setDialog] = useState({
+        isOpen: false,
+        message: '',
+        onConfirm: () => {}
+    });
+
+    const openConfirmDialog = (message, onConfirmAction) => {
+        setDialog({
+            isOpen: true,
+            message,
+            onConfirm: () => {
+                onConfirmAction();
+                setDialog(prev => ({ ...prev, isOpen: false }));
+            }
+        });
+    };
 
     const fetchBlocked = async () => {
         try {
@@ -14,21 +29,28 @@ const BlockedStudentsList = () => {
             const data = await res.json();
             setBlockedStudents(data);
         } catch (err) {
-            setError('Failed to fetch blocked accounts');
+            setError('Failed to fetch blocked accounts: ' + err);
         }
     };
 
     const unblockStudent = async (studentId) => {
         try {
-            const res = await fetch(`http://localhost:3000/admin/student/unblock/${studentId}`, {
+            const res = await fetch(`http://localhost:3000/admin/students/unblock/${studentId}`, {
                 method: 'PATCH',
             });
             if (res.ok) {
                 fetchBlocked(); // Refresh list
             }
         } catch (err) {
-            setError('Unblock failed');
+            setError('Unblock failed :' + err);
         }
+    };
+
+    const confirmUnblock = (studentId, studentName) => {
+        openConfirmDialog(
+            `Are you sure you want to unblock ${studentName}?`,
+            () => unblockStudent(studentId)
+        );
     };
 
     useEffect(() => {
@@ -36,17 +58,16 @@ const BlockedStudentsList = () => {
     }, []);
 
     return (
-        <div className="p-4">
+        <div>
             <h2 className='table-heading'>Blocked Student Accounts</h2>
-            {error && <p className="text-red-600">{error}</p>}
+            <p className="page-desc">List of all blocked students</p>
+            {error && <p className='error-msg'>{error}</p>}
             {blockedStudents.length === 0 ? (
                 <p>No blocked accounts found.</p>
             ) : (
                 <div className="table-container">
-
-
-                    <table className="w-full border">
-                        <thead className="bg-gray-100">
+                    <table>
+                        <thead>
                             <tr>
                                 <th>Student Name</th>
                                 <th>Email</th>
@@ -56,13 +77,13 @@ const BlockedStudentsList = () => {
                         </thead>
                         <tbody>
                             {blockedStudents.map((student) => (
-                                <tr key={student.student_id} className="border-b">
+                                <tr key={student.student_id}>
                                     <td>{student.name}</td>
                                     <td>{student.email}</td>
-                                    <td className="p-2 text-sm text-gray-700">{student.blocked_reason || '—'}</td>
+                                    <td>{student.blocked_reason || '—'}</td>
                                     <td>
                                         <button
-                                            onClick={() => unblockStudent(student.student_id)}
+                                            onClick={() => confirmUnblock(student.student_id, student.name)}
                                             className="btn-warning"
                                         >
                                             Unblock
@@ -74,8 +95,15 @@ const BlockedStudentsList = () => {
                     </table>
                 </div>
             )}
-        </div>
-    )
-}
 
-export default BlockedStudentsList
+            <ConfirmDialog
+                isOpen={dialog.isOpen}
+                message={dialog.message}
+                onConfirm={dialog.onConfirm}
+                onCancel={() => setDialog(prev => ({ ...prev, isOpen: false }))}
+            />
+        </div>
+    );
+};
+
+export default BlockedStudentsList;

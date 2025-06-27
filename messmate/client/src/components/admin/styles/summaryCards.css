@@ -1,0 +1,59 @@
+@import url(../../common/common.css);
+.summary-cards {
+    display: flex;
+    gap: var(--space-sm);
+    margin-top: var(--space-md);
+    margin-bottom: var(--space-md);
+    flex-wrap: wrap;
+}
+
+/* Summary card styling */
+.summary-card {
+    min-width: 200px;
+    flex: 1;
+    background: linear-gradient(135deg, var(--col-white-100), var(--col-gray-50));
+    padding: var(--space-6);
+    border-radius: var(--space-3);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+    border: 1px solid var(--col-gray-200);
+    position: relative;
+    overflow: hidden;
+}
+
+.summary-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 4px;
+    background: var(--col-primary-500);
+}
+
+.summary-card-title {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--col-gray-600);
+    text-transform: uppercase;
+    margin-bottom: var(--space-sm);
+}
+
+.summary-card-value {
+    font-size: 1.875rem;
+    font-weight: 700;
+    color: var(--col-secondary-600);
+    line-height: 1.2;
+}
+
+/* Specific card value colors */
+.summary-card-value.success {
+    color: var(--col-success-dark);
+}
+
+.summary-card-value.warning {
+    color: var(--col-warning-dark);
+}
+
+.summary-card-value.primary {
+    color: var(--col-primary-600);
+}

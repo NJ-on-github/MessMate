@@ -1,13 +1,13 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { NavLink } from 'react-router-dom';
-import "../common/table.css";
 import "../common/common.css";
 import "../common/form.css";
 
 const AdminLogin = () => {
   const [adminData, setAdminData] = useState({ email: '', password: '' });
   const [message, setMessage] = useState('');
+  const [isSuccess, setIsSuccess] = useState(false);
   const navigate = useNavigate();
 
   const handleChange = (e) => {
@@ -19,70 +19,67 @@ const AdminLogin = () => {
   };
 
   const handleLogin = async (e) => {
-  e.preventDefault();
-  try {
-    const res = await fetch('http://localhost:3000/admin/login', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(adminData)
-    });
+    e.preventDefault();
+    try {
+      const res = await fetch('http://localhost:3000/admin/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(adminData)
+      });
 
-    const data = await res.json();
+      const data = await res.json();
 
-    if (res.ok) {
-      localStorage.setItem('adminId', data.adminId);
-      localStorage.setItem('adminName', data.name);
-      navigate('/admin/dashboard');
-    } else {
-      setMessage(data.error || 'Login failed.');
+      if (res.ok) {
+        localStorage.setItem('adminId', data.adminId);
+        localStorage.setItem('adminName', data.name);
+        setMessage(data.message || 'Admin login successful!');
+        setIsSuccess(true);
+        navigate('/admin/dashboard');
+      } else {
+        setMessage(data.error || 'Login failed.');
+        setIsSuccess(false);
+      }
+    } catch (err) {
+      console.error(err);
+      setMessage('Something went wrong. Please try again.');
+      setIsSuccess(false);
     }
-  } catch (err) {
-    console.error(err);
-    setMessage('Something went wrong. Please try again.');
-  }
-};
+  };
 
   return (
-    <div className="center-all">
-      <div className='form-container'>
-        <div className="form-header">
-          <h2>Admin Login</h2>
+    <div className="page-background">
+      <div className="center-all">
+        <div className='form-container'>
+          <div className="form-header">
+            <h2>Admin Login</h2>
+          </div>
+          <form onSubmit={handleLogin}>
+            <div className='formGroup'>
+              <label>Email:</label>
+              <input type="email" name="email" value={adminData.email} onChange={handleChange} required />
+            </div>
+
+            <div className='formGroup'>
+              <label>Password:</label>
+              <input type="password" name="password" value={adminData.password} onChange={handleChange} required />
+            </div>
+
+            <button className="login-btn" type="submit">Login</button>
+          </form>
+
+          {message && (
+            <p className={`login-message ${isSuccess ? 'success' : 'error'}`}>
+              {message}
+            </p>
+          )}
+
+          <NavLink to="/" className="form-nav-link">
+            Go back to Homepage
+          </NavLink>
         </div>
-        <form onSubmit={handleLogin}>
-          <div className='formGroup'>
-            <label>Email:</label>
-            <input type="email" name="email" value={adminData.email} onChange={handleChange} required />
-          </div>
-
-          <div className='formGroup'>
-            <label>Password:</label>
-            <input type="password" name="password" value={adminData.password} onChange={handleChange} required />
-          </div>
-
-          <button className="login-btn" type="submit" style={buttonStyle}>Login</button>
-        </form>
-
-        {message && <p style={{ marginTop: '1rem', color: 'green' }}>{message}</p>}
-
-        <NavLink to="/" className="form-nav-link">
-          Go back to Homepage
-        </NavLink>
       </div>
     </div>
   );
-};
-
-// const formGroup = {
-//   marginBottom: '1rem',
-//   display: 'flex',
-//   flexDirection: 'column',
-// };
-
-const buttonStyle = {
-  padding: '10px 20px',
-  fontSize: '16px',
-  marginTop: '10px',
-  cursor: 'pointer',
 };
 
 export default AdminLogin;

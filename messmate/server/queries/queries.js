@@ -87,6 +87,20 @@ const COUNT_PENDING_REGISTRATIONS = `
   SELECT COUNT(*) FROM students WHERE registration_status = 'pending';
 `;
 
+const GET_MONTHLY_PAYMENT = `
+SELECT 
+  SUM(CASE WHEN payment_status = 'paid' THEN amount ELSE 0 END) AS received,
+  SUM(CASE WHEN payment_status = 'pending' THEN amount ELSE 0 END) AS pending,
+  SUM (amount) as total
+FROM payments
+WHERE month_year = $1;
+`
+
+const COUNT_APPROVED_STUDENTS = `
+SELECT COUNT(*) AS count
+FROM students
+WHERE registration_status = 'approved';`
+
 const COUNT_PENDING_PAYMENTS_THIS_MONTH = `
   SELECT COUNT(*) FROM payments 
   WHERE payment_status = 'pending' 
@@ -230,7 +244,7 @@ const GET_SET_FEES_BY_MONTH = `
   SELECT * FROM fees_structure WHERE effective_from = $1;
   `;
 
-const createPaymentsForNewFee = `
+const CREATE_PAYMENTS_FOR_NEW_FEE = `
     INSERT INTO payments (
         student_id,
         fee_id,
@@ -389,7 +403,7 @@ const DELETE_FROM_TODAYS_DINNER = `
 `;
 
 module.exports = {
-  createPaymentsForNewFee,
+  CREATE_PAYMENTS_FOR_NEW_FEE,
   MATCH_ADMIN_LOGIN,
   INSERT_USER,
   INSERT_STUDENT,
@@ -398,6 +412,8 @@ module.exports = {
   LOGIN_FIND_STUDENT_BY_USER_ID,
   LOGIN_CHECK_ACCOUNT_BLOCK,
   COUNT_PENDING_REGISTRATIONS,
+  GET_MONTHLY_PAYMENT,
+  COUNT_APPROVED_STUDENTS,
   COUNT_PENDING_PAYMENTS_THIS_MONTH,
   GET_ALL_STUDENTS,
   GET_BLOCKED_REGISTRATIONS,

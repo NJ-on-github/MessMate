@@ -1,53 +1,87 @@
+.page-background {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    min-height: 100vh;
+    background: linear-gradient(135deg, 
+        var(--col-primary-100) 0%, 
+        var(--col-primary-200) 25%, 
+        var(--col-white-100) 50%, 
+        var(--col-primary-100) 75%, 
+        var(--col-primary-300) 100%);
+    background-size: 400% 400%;
+    animation: gradientShift 15s ease infinite;
+}
+
+@keyframes gradientShift {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
 .center-all {
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 100vh;
+    min-height: 100vh;
+    position: relative;
+    z-index: 1;
+    padding: var(--space-4) 0;
+    overflow-y: auto;
 }
+
 .form-container {
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    width: 40%;
+    width: 100%;
+    max-width: 420px;
+    margin: 0 var(--space-4);
     position: relative;
 }
 
 .form-header {
-   z-index: 25;
+    z-index: 1;
     width: 100%;
-    background-color: var(--col-secondary-50);
-    background-image: 
-        radial-gradient(circle at 0% 0%, rgba(255, 255, 255, 0.1) 20%, transparent 20%),
-        radial-gradient(circle at 100% 0%, rgba(255, 255, 255, 0.1) 20%, transparent 20%),
-        radial-gradient(circle at 100% 100%, rgba(255, 255, 255, 0.1) 20%, transparent 20%),
-        radial-gradient(circle at 0% 100%, rgba(255, 255, 255, 0.1) 20%, transparent 20%);
-    background-size: 5rem 5rem;
+    background: linear-gradient(135deg, 
+        var(--col-secondary-500) 0%, 
+        var(--col-secondary-400) 50%, 
+        var(--col-secondary-600) 100%);
+    background-size: 200% 200%;
+    position: relative;
+    overflow: hidden;
     padding: 1.75rem 1.5rem;
     text-align: center;
-    position: relative;
-    width: calc(100%);
     border-top-left-radius: var(--space-md);
     border-top-right-radius: var(--space-md);
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-    animation: fadeIn 0.6s ease-out;
+    box-shadow: 0 4px 20px rgba(7, 34, 75, 0.3);
     transition: all 0.2s ease;
+    box-sizing: border-box;
+}
+
+.form-header h2 {
+    position: relative;
+    z-index: 1;
+    color: var(--col-white-100);
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+    font-weight: 600;
 }
 
 form {
     display: flex;
     flex-direction: column;
     padding: 2rem 1.5rem;
-    min-width: 420px;
     width: 100%;
     background-color: var(--col-white-100);
     border-bottom-left-radius: var(--space-md);
     border-bottom-right-radius: var(--space-md);
-    /* box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15); */
-    /* overflow: hidden; */
     position: relative;
     z-index: 2;
     animation: fadeIn 0.6s ease-out;
+    box-sizing: border-box;
+    box-shadow: 0 4px 20px rgba(7, 34, 75, 0.3);
 }
 
 form input {
@@ -55,13 +89,11 @@ form input {
     box-sizing: border-box;
     background-color: var(--col-white-100);
     padding: var(--space-4) var(--space-4);
-    /* Changed from 144px 166px to 12px 16px using your spacing variables */
     border: 2px solid var(--col-gray-200);
     border-radius: var(--space-sm);
     font-size: 1.125rem;
     transition: all 0.2s ease;
     color: var(--text-dark);
-    ;
 }
 
 form input:hover {
@@ -80,7 +112,6 @@ form label {
     font-weight: 500;
     color: var(--secondary);
     font-size: 1.125rem;
-
 }
 
 .login-btn {
@@ -111,6 +142,26 @@ form label {
     margin-right: 8px;
 }
 
+.login-message {
+    text-align: center;
+    padding: var(--space-3);
+    margin: var(--space-3) 0;
+    font-weight: 500;
+    font-size: 1rem;
+}
+
+.login-message.success {
+    color: var(--col-success-dark);
+    background-color: var(--col-success-light);
+    border: 1px solid var(--color-success);
+}
+
+.login-message.error {
+    color: var(--col-error-dark);
+    background-color: var(--col-error-light);
+    border: 1px solid var(--color-error);
+}
+
 .form-nav-link {
     display: flex;
     width: 100%;
@@ -120,11 +171,12 @@ form label {
     color: var(--col-gray-500);
     font-size: 1rem;
     cursor: pointer;
-    margin: auto;
     text-align: center;
     padding: 1rem;
+    box-sizing: border-box;
 }
-.form-nav-link:hover{
+
+.form-nav-link:hover {
     text-decoration: underline;
 }
 
@@ -150,4 +202,109 @@ form label {
 .register-link:hover {
     color: var(--col-primary-600);
     text-decoration: underline;
+}
+
+/* student login error */
+.student-login-error-container {
+    background: var(--col-white-100);
+    border-radius: 1rem;
+    box-shadow: 0 4px 20px rgba(7, 34, 75, 0.10);
+    border: 1px solid var(--col-error-light);
+    padding: 2.5rem 2rem 2rem 2rem;
+    max-width: 420px;
+    margin: 2rem auto;
+    text-align: center;
+    animation: fadeIn 0.6s ease;
+}
+
+.student-login-error-container h2 {
+    color: var(--col-error-dark);
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+}
+
+.student-login-error-container p {
+    color: var(--col-gray-700);
+    font-size: 1.1rem;
+    margin-bottom: 2rem;
+}
+
+.student-login-error-container .form-nav-link {
+    color: var(--col-primary-500);
+    font-weight: 500;
+    text-decoration: none;
+    border-radius: 0.5rem;
+    padding: 0.75rem 1.25rem;
+    background: var(--col-primary-100);
+    transition: background 0.2s, color 0.2s;
+    display: inline-block;
+}
+
+.student-login-error-container .form-nav-link:hover {
+    background: var(--col-primary-500);
+    color: var(--col-white-100);
+    text-decoration: underline;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .form-container {
+        width: 100%;
+        max-width: 100%;
+        margin: 0 var(--space-3);
+    }
+    
+    .form-header {
+        padding: 1.5rem 1rem;
+    }
+    
+    .form-header h2 {
+        font-size: 1.5rem;
+    }
+    
+    form {
+        padding: 1.5rem 1rem;
+    }
+    
+    form input {
+        font-size: 1rem;
+        padding: var(--space-3) var(--space-3);
+    }
+    
+    form label {
+        font-size: 1rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .center-all {
+        padding: var(--space-4);
+    }
+    
+    .form-container {
+        margin: 0 var(--space-2);
+    }
+    
+    .form-header {
+        padding: 1.25rem 0.75rem;
+    }
+    
+    .form-header h2 {
+        font-size: 1.25rem;
+    }
+    
+    form {
+        padding: 1.25rem 0.75rem;
+    }
+    
+    .login-btn {
+        padding: 0.875rem;
+        font-size: 0.9rem;
+    }
+    
+    .login-message {
+        font-size: 0.9rem;
+        padding: var(--space-2);
+    }
 }

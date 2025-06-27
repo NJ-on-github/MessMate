@@ -1,26 +1,42 @@
 import React, { useEffect, useState } from 'react';
 import "../common/table.css";
 import "../common/common.css";
+import "../admin/styles/summaryCards.css"
 
 const PaymentsByMonth = () => {
   const [month, setMonth] = useState('');
   const [payments, setPayments] = useState([]);
+  const [summary, setSummary] = useState({ received: 0.00, pending: 0.00, total: 0.00 });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
+  const formatMonth = (input) => {
+    const [year, month] = input.split('-');
+    return `${month}-${year}`;
+  };
+
   const fetchPayments = async () => {
     if (!month) return;
-
     setLoading(true);
     setError(null);
     try {
-      const formattedMonth = formatMonth(month)
+      const formattedMonth = formatMonth(month);
+
+      // Fetch payments list
       const response = await fetch(`http://localhost:3000/admin/payments/month?month=${formattedMonth}`);
-      if (!response.ok) {
-        throw new Error('Failed to fetch payments');
-      }
+      if (!response.ok) throw new Error('Failed to fetch payments');
       const data = await response.json();
       setPayments(data);
+
+      // Fetch summary
+      const summaryRes = await fetch(`http://localhost:3000/admin/payments/summary?month=${formattedMonth}`);
+      if (!summaryRes.ok) throw new Error('Failed to fetch summary');
+      const summaryData = await summaryRes.json();
+      setSummary({
+        received: Number(summaryData.received).toFixed(2) || 0.00,
+        pending: Number(summaryData.pending).toFixed(2) || 0.00,
+        total: (Number(summaryData.total).toFixed(2) || 0.00)
+      });
     } catch (err) {
       setError(err.message);
     } finally {
@@ -28,57 +44,85 @@ const PaymentsByMonth = () => {
     }
   };
 
-  const formatMonth = (input) => {
-    const [year, month] = input.split('-');
-    return `${month}-${year}`;
-  };
-
   useEffect(() => {
     fetchPayments();
+    // eslint-disable-next-line
   }, [month]);
 
-  return (
-    <div className="p-4">
-      <h2 className='table-heading'>All Payments for a Month</h2>
+  const formatDate = (dateStr) => {
+    if (!dateStr) return '—';
+    const date = new Date(dateStr);
+    if (isNaN(date)) return dateStr;
+    return date.toLocaleDateString('en-IN', { year: 'numeric', month: 'short', day: 'numeric' });
+  };
 
-      <div>
+  return (
+    <div>
+      <h2 className='table-heading'>Monthly Payment Status</h2>
+      <p className='page-desc'>Select a month to see its payment status</p>
+
+      <div className="month-selector">
         <label>Select Month:</label>
         <input
           type="month"
           value={month}
           onChange={(e) => setMonth(e.target.value)}
-          className="border px-3 py-1 rounded"
+          className="form-input"
         />
       </div>
 
-      {loading && <p>Loading...</p>}
-      {error && <p className="text-red-600">{error}</p>}
-      {!loading && payments.length === 0 && <p>No payments found for this month.</p>}
+      {/* Summary Cards */}
+      <div className="summary-cards">
+        <div className="summary-card">
+          <div className="summary-card-title">Total Receivable</div>
+          <div className="summary-card-value primary">₹{summary.total}</div>
+        </div>
+        <div className="summary-card">
+          <div className="summary-card-title">Amount Received</div>
+          <div className="summary-card-value success">₹{summary.received}</div>
+        </div>
+        <div className="summary-card">
+          <div className="summary-card-title">Amount Pending</div>
+          <div className="summary-card-value warning">₹{summary.pending}</div>
+        </div>
+      </div>
+
+      {loading && <p className="loading-message">Loading payments...</p>}
+      {error && <p className="error-message"><strong>Error:</strong> {error}</p>}
+      {!loading && payments.length === 0 && month && (
+        <p className="no-data-message">
+          📊 No payments found for this month.
+          <br />
+          <span style={{ fontSize: '0.9rem', opacity: 0.7 }}>
+            Try selecting a different month or check if data is available.
+          </span>
+        </p>
+      )}
 
       {payments.length > 0 && (
         <div className="table-container">
-        <table className="w-full border text-left">
-          <thead className="bg-gray-200">
-            <tr>
-              <th className="p-2">Student Name</th>
-              <th className="p-2">Email</th>
-              <th className="p-2">Amount</th>
-              <th className="p-2">Status</th>
-              <th className="p-2">Payment Date</th>
-            </tr>
-          </thead>
-          <tbody>
-            {payments.map((payment) => (
-              <tr key={payment.payment_id} className="border-b">
-                <td className="p-2">{payment.name}</td>
-                <td className="p-2">{payment.email}</td>
-                <td className="p-2">₹{payment.amount}</td>
-                <td className="p-2 capitalize">{payment.payment_status}</td>
-                <td className="p-2">{payment.payment_date || '—'}</td>
+          <table>
+            <thead>
+              <tr>
+                <th>Student Name</th>
+                <th>Email</th>
+                <th>Amount</th>
+                <th>Status</th>
+                <th>Payment Date</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {payments.map((payment, index) => (
+                <tr key={payment.payment_id}>
+                  <td>{payment.name}</td>
+                  <td>{payment.email}</td>
+                  <td>₹{payment.amount}</td>
+                  <td>{payment.payment_status}</td>
+                  <td>{formatDate(payment.payment_date)}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
       )}
     </div>
@@ -86,116 +130,3 @@ const PaymentsByMonth = () => {
 };
 
 export default PaymentsByMonth;
-
-
-// import React, { useEffect, useState } from 'react';
-
-// const PaymentsByMonth = () => {
-//   const [monthYear, setMonthYear] = useState('2025-04'); // Default month
-//   const [pendingStudents, setPendingStudents] = useState([]);
-//   const [loading, setLoading] = useState(false);
-//   const [error, setError] = useState('');
-
-//   const months = [
-//     '2025-01', '2025-02', '2025-03', '2025-04',
-//     '2025-05', '2025-06', '2025-07', '2025-08',
-//     '2025-09', '2025-10', '2025-11', '2025-12'
-//   ];
-
-//   const fetchPendingStudents = async () => {
-//     setLoading(true);
-//     try {
-//       const res = await fetch(`http://localhost:3000/admin/pending-payments/${monthYear}`);
-//       if (!res.ok) throw new Error('Failed to fetch pending payments');
-//       const data = await res.json();
-//       setPendingStudents(data);
-//     } catch (err) {
-//       setError(err.message);
-//     } finally {
-//       setLoading(false);
-//     }
-//   };
-
-//   useEffect(() => {
-//     fetchPendingStudents();
-//   }, [monthYear]);
-
-//   const blockStudent = async (studentId) => {
-//     try {
-//       const res = await fetch(`http://localhost:3000/admin/block-student/${studentId}`, {
-//         method: 'PATCH',
-//         headers: { 'Content-Type': 'application/json' },
-//         body: JSON.stringify({ reason: 'Payment pending for ' + monthYear })
-//       });
-//       if (!res.ok) throw new Error('Blocking failed');
-//       alert('Student blocked successfully!');
-//       fetchPendingStudents(); // Refresh list after blocking
-//     } catch (err) {
-//       alert(err.message);
-//     }
-//   };
-
-//   if (loading) return <p>Loading...</p>;
-//   if (error) return <p style={{ color: 'red' }}>Error: {error}</p>;
-
-//   return (
-//     <div>
-//       <h2>Students with Pending Payment - {monthYear}</h2>
-
-//       <div>
-//         <label>Select Month: </label>
-//         <select value={monthYear} onChange={(e) => setMonthYear(e.target.value)}>
-//           {months.map((m) => (
-//             <option key={m} value={m}>{m}</option>
-//           ))}
-//         </select>
-//       </div>
-
-//       {pendingStudents.length === 0 ? (
-//         <p>No pending payments for this month.</p>
-//       ) : (
-//         <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-//           <thead>
-//             <tr>
-//               <th style={thStyle}>ID</th>
-//               <th style={thStyle}>Name</th>
-//               <th style={thStyle}>Email</th>
-//               <th style={thStyle}>Hostel</th>
-//               <th style={thStyle}>Branch</th>
-//               <th style={thStyle}>Action</th>
-//             </tr>
-//           </thead>
-//           <tbody>
-//             {pendingStudents.map(student => (
-//               <tr key={student.student_id}>
-//                 <td style={tdStyle}>{student.student_id}</td>
-//                 <td style={tdStyle}>{student.name}</td>
-//                 <td style={tdStyle}>{student.email}</td>
-//                 <td style={tdStyle}>{student.hostel_name}</td>
-//                 <td style={tdStyle}>{student.branch}</td>
-//                 <td style={tdStyle}>
-//                   <button onClick={() => blockStudent(student.student_id)}>Block</button>
-//                 </td>
-//               </tr>
-//             ))}
-//           </tbody>
-//         </table>
-//       )}
-//     </div>
-//   );
-// };
-
-// const thStyle = {
-//   border: '1px solid #ccc',
-//   backgroundColor: '#0a2540',
-//   color: '#fff',
-//   padding: '10px',
-//   textAlign: 'left'
-// };
-
-// const tdStyle = {
-//   border: '1px solid #ddd',
-//   padding: '10px',
-// };
-
-// export default PaymentsByMonth;

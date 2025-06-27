@@ -1,0 +1,77 @@
+.confirm-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100vh;
+  width: 100vw;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.confirm-box {
+  background: var(--col-white-100);
+  padding: var(--space-8) var(--space-10);
+  border-radius: 1rem;
+  text-align: center;
+  max-width: 400px;
+  min-width: 320px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.15);
+  border: 1px solid var(--col-gray-200);
+}
+
+.confirm-box p {
+  font-size: 1.125rem;
+  color: var(--col-gray-800);
+  line-height: 1.5;
+  margin: 0;
+  font-weight: 500;
+}
+
+.confirm-actions {
+  margin-top: var(--space-8);
+  display: flex;
+  justify-content: center;
+  gap: var(--space-4);
+}
+
+.btn-confirm {
+  background-color: var(--col-success-light);
+  color: var(--col-success-dark);
+  padding: var(--space-2) var(--space-4);
+  border: none;
+  border-radius: var(--space-1);
+  cursor: pointer;
+  font-size: 1rem;
+  font-weight: 500;
+  transition: all 0.2s ease-in-out;
+  min-width: 80px;
+}
+
+.btn-confirm:hover {
+  background-color: var(--color-success);
+  color: var(--col-white-100);
+  transform: translateY(-0.125rem);
+}
+
+.btn-cancel {
+  background-color: var(--col-warning-light);
+  color: var(--col-warning-dark);
+  padding: var(--space-2) var(--space-4);
+  border: none;
+  border-radius: var(--space-1);
+  cursor: pointer;
+  font-size: 1rem;
+  font-weight: 500;
+  transition: all 0.2s ease-in-out;
+  min-width: 80px;
+}
+
+.btn-cancel:hover {
+  background-color: var(--color-warning);
+  color: black;
+  transform: translateY(-0.125rem);
+  box-shadow: var(--col-warning-light) 0 0 0 2px;
+}

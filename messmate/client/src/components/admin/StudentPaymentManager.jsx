@@ -1,11 +1,28 @@
 import React, { useState } from 'react';
 import "../common/table.css";
 import "../common/common.css";
+import ConfirmDialog from "../common/ConfirmDialog"; // Import confirm dialog
 
 const StudentPaymentManager = () => {
   const [query, setQuery] = useState('');
   const [results, setResults] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [dialog, setDialog] = useState({
+    isOpen: false,
+    message: '',
+    onConfirm: () => {}
+  });
+
+  const openConfirmDialog = (message, onConfirmAction) => {
+    setDialog({
+      isOpen: true,
+      message,
+      onConfirm: () => {
+        onConfirmAction();
+        setDialog(prev => ({ ...prev, isOpen: false }));
+      }
+    });
+  };
 
   const searchPayments = async () => {
     setLoading(true);
@@ -36,8 +53,9 @@ const StudentPaymentManager = () => {
       console.log('Payment update response:', data);
 
       setResults(prev =>
-        prev.map(p => p.payment_id === paymentId ? 
-          { ...p, payment_status: 'paid', payment_date: new Date().toISOString() } : p
+        prev.map(p => p.payment_id === paymentId
+          ? { ...p, payment_status: 'paid', payment_date: new Date().toISOString() }
+          : p
         )
       );
     } catch (err) {
@@ -45,10 +63,17 @@ const StudentPaymentManager = () => {
     }
   };
 
+  const confirmMarkAsPaid = (paymentId, studentName) => {
+    openConfirmDialog(
+      `Are you sure you want to mark ${studentName}'s payment as paid?`,
+      () => markAsPaid(paymentId)
+    );
+  };
+
   return (
     <div>
       <h2 className="table-heading">Search Student Payments</h2>
-      <p>Search Student's name to get all the payments</p>
+      <p className='page-desc'>Search a student's name or email to get the payment details</p>
       <div className="search-group">
         <input
           type="text"
@@ -92,7 +117,7 @@ const StudentPaymentManager = () => {
                   <td>
                     {payment.payment_status !== 'paid' && (
                       <button
-                        onClick={() => markAsPaid(payment.payment_id)}
+                        onClick={() => confirmMarkAsPaid(payment.payment_id, payment.name)}
                         className="btn-success"
                       >
                         Mark as Paid
@@ -107,6 +132,14 @@ const StudentPaymentManager = () => {
       ) : (
         <p>No results found.</p>
       )}
+
+      {/* ConfirmDialog Component */}
+      <ConfirmDialog
+        isOpen={dialog.isOpen}
+        message={dialog.message}
+        onConfirm={dialog.onConfirm}
+        onCancel={() => setDialog(prev => ({ ...prev, isOpen: false }))}
+      />
     </div>
   );
 };

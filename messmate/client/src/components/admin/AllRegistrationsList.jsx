@@ -4,7 +4,7 @@ import { useEffect } from 'react'
 import "../common/table.css";
 import "../common/common.css";
 
-const AllStudentList = () => {
+const AllRegistrationsList = () => {
 
     const [receivedData, setreceivedData] = useState([]);
     const [error, setError] = useState(null);
@@ -36,7 +36,8 @@ const AllStudentList = () => {
 
     return (
         <div>
-            <h2 className='table-heading'>All Students</h2>
+            <h2 className='table-heading'>All Student Registrations</h2>
+            <p className="page-desc">List of all registrations</p>
             <div className="table-container">
            
             <table>
@@ -75,4 +76,4 @@ const AllStudentList = () => {
 
 }
 
-export default AllStudentList
+export default AllRegistrationsList

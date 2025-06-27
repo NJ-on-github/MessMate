@@ -1,126 +1,199 @@
 @import url('../common/common.css');
 
-
-
+/* Sidebar Base Styles */
 .sidebar {
-    width: 260px;
-    height: 100vh;
-    position: fixed;
-    left: 0;
-    top: 0;
-    background-color: var(--secondary);
-    background-image: linear-gradient(to bottom, var(--col-secondary-500), var(--col-secondary-800));
-    color: var(--white);
-    display: flex;
-    flex-direction: column;
-    transition: all 0.3s ease;
-    z-index: 100;
-    box-shadow: 4px 0 10px rgba(0, 0, 0, 0.05);
-    overflow-y: auto;
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100vh;
+  height: 100dvh;
+  background-color: #1e293b;
+  background-image: linear-gradient(to bottom, var(--col-secondary-500), var(--col-secondary-800));
+  color: var(--col-white-100);
+  display: flex;
+  flex-direction: column;
+  transition: width 0.3s ease-in-out;
+  z-index: 10;
+  box-shadow: 4px 0 10px rgba(0, 0, 0, 0.05);
+  overflow-y: auto;
 }
 
-.sidebar {
-    position: fixed;
-    height: 100vh;
-    background-color: #1e293b;
-    color: white;
-    transition: width 0.3s ease-in-out;
-    z-index: 10;
-}
-
+/* Collapsed state */
 .sidebar.collapsed {
-    width: 4rem;
-    overflow-y: hidden;
+  width: 4rem;
+  overflow-y: hidden;
+  overflow-x: hidden;
 }
 
+/* Expanded state */
 .sidebar.expanded {
-    width: 15rem;
-    overflow-y: auto;
-    scrollbar-width: thin;
-    scrollbar-color: var(--col-gray-700) var(--col-secondary-500);
+  width: auto;
+  max-width: 30rem;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: var(--col-gray-700) var(--col-secondary-500);
 }
 
+/* Sidebar content container */
 .sidebar-content {
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-sm);
-    padding: 3rem;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+  padding: 3rem;
 }
 
-.nav-link {
-    color: var(--col-white-100);
-    text-decoration: none;
-    padding: var(--space-lg) var(--space-xl);
-    border-radius: var(--space-md);
-    display: block;
-    transition: all 0.2s ease-in-out;
-    background-color: #ffffff1e;
-    text-overflow: clip;
-    text-wrap: nowrap;
+/* Adjust padding when expanded */
+.sidebar.expanded .sidebar-content {
+  padding: 1.5rem;
 }
 
-.nav-link:hover {
-    background-color: var(--col-white-400);
-    color: black;
+/* Center toggle button when collapsed */
+.sidebar.collapsed .sidebar-content {
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  padding: 0;
 }
 
-.nav-link.active {
-    background-color: var(--col-white-100);
-    color: var(--col-secondary-800);
-    font-weight: 600;
-}
-
-.collapsed .nav-link {
-    opacity: 0;
-}
-
-.collapsed h3 {
-    opacity: 0;
-}
-
+/* Sidebar header logo */
 .sidebar-header {
-    padding: var(--space-md);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin-bottom: var(--space-lg);
+  padding: var(--space-md);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: var(--space-lg);
 }
 
 .logo {
-    transition: all 0.3s ease;
+  transition: all 0.3s ease;
 }
 
 .logo-expanded {
-    width: 180px;
-    height: auto;
+  width: 10rem;
+  height: auto;
 }
 
 .logo-collapsed {
-    width: 40px;
-    height: 40px;
+  width: 2.5rem;
+  height: 2.5rem;
 }
 
+/* Navigation Links */
+.nav-link {
+  color: var(--col-white-100);
+  text-decoration: none;
+  padding: var(--space-lg) var(--space-xl);
+  border-radius: var(--space-md);
+  display: block;
+  transition: all 0.2s ease-in-out;
+  background-color: #ffffff1e;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.nav-link:hover {
+  background-color: var(--col-white-400);
+  color: black;
+}
+
+.nav-link.active {
+  background-color: var(--col-white-100);
+  color: var(--col-secondary-800);
+  font-weight: 600;
+}
+
+/* Hide labels in collapsed mode */
+.sidebar.collapsed .nav-link,
+.sidebar.collapsed h3 {
+  opacity: 0;
+}
+
+.sidebar h3 {
+  margin: var(--space-sm);
+}
+
+/* Logout section */
 .logout-section {
-    margin-top: auto;
-    padding: var(--space-4);
-    border-top: 1px solid var(--col-gray-200);
+  margin-top: auto;
+  padding: var(--space-4);
+  border-top: 1px solid var(--col-gray-200);
 }
 
 .logout-link {
-    width: 100%;
-    padding: var(--space-3);
-    color: var(--color-error);
-    background: none;
-    border: none;
-    cursor: pointer;
-    text-align: left;
-    font-size: 1rem;
-    display: flex;
-    align-items: center;
-    transition: all 0.2s ease;
+  width: 100%;
+  padding: var(--space-3);
+  color: var(--color-error);
+  background: none;
+  border: none;
+  cursor: pointer;
+  text-align: left;
+  font-size: 1rem;
+  display: flex;
+  align-items: center;
+  transition: all 0.2s ease;
 }
 
 .logout-link:hover {
-    background-color: var(--col-error-light);
-    border-radius: var(--space-1);
+  background-color: var(--col-error-light);
+  border-radius: var(--space-1);
+}
+
+/* Toggle Button (Default) */
+/* Default (collapsed, centered) */
+.sidebar-toggle-btn {
+  background: none;
+  fill: var(--col-white-100);
+  border: none;
+  border-radius: 50%;
+  padding: 0.5rem;
+  cursor: pointer;
+  margin: auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.2s ease;
+}
+
+/* Hover style */
+.sidebar-toggle-btn:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+/* Mobile override when sidebar is expanded: top-left button */
+@media (max-width: 768px) {
+  .sidebar.expanded .sidebar-toggle-btn {
+    position: absolute;
+    top: 1rem;
+    left: 1rem;
+    margin: 0;
+    z-index: 100;
+    background-color: rgba(255, 255, 255, 0.05);
+    opacity: 1;
+  }
+
+  /* Optional: Slight hover bump */
+  .sidebar.expanded .sidebar-toggle-btn:hover {
+    background-color: rgba(255, 255, 255, 0.15);
+  }
+}
+
+/* Fade-in blur overlay */
+.sidebar-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  backdrop-filter: blur(6px);
+  background-color: rgba(0, 0, 0, 0.3);
+  z-index: 5;
+  opacity: 0;
+  animation: overlayFadeIn 0.3s ease forwards;
+}
+
+@keyframes overlayFadeIn {
+  to {
+    opacity: 1;
+  }
 }

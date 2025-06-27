@@ -3,7 +3,6 @@ const router = express.Router();
 const pool = require('../db.js');
 const queries = require('../queries/queries.js');
 
-
 router.post('/register', async (req, res) => {
     const { name, email, password, hostel_name, branch } = req.body;
 
@@ -56,14 +55,14 @@ const { email, password } = req.body;
       );
   
       if (userResult.rows.length === 0) {
-        return res.status(400).json({ error: 'Student not found.' });
+        return res.status(400).json({ error: 'Student not found !' });
       }
   
       const user = userResult.rows[0];
   
-      // 2. Check password (simple match for now)
+      // 2. Check password (simple match)
       if (user.password_hash !== password) {
-        return res.status(400).json({ error: 'Incorrect password.' });
+        return res.status(400).json({ error: 'Incorrect password!' });
       }
   
       // 3. Get student ID and registration status
@@ -73,7 +72,7 @@ const { email, password } = req.body;
       );
   
       if (studentResult.rows.length === 0) {
-        return res.status(400).json({ error: 'Student record not found.' });
+        return res.status(400).json({ error: 'Student record not found!' });
       }
   
       const student = studentResult.rows[0];
