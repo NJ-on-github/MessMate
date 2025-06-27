@@ -371,3 +371,45 @@ label {
     margin: 1rem 0;
     color: var(--col-gray-600);
 }
+
+/* Dropdown styles */
+.Search-group select {
+  padding: 8px 12px;
+  border: 1px solid var(--col-gray-300);
+  border-radius: 4px;
+  background: var(--col-white-100);
+  font-size: 1rem;
+  color: var(--col-gray-900);
+  transition: border-color 0.2s;
+  margin-top: 4px;
+  margin-bottom: 8px;
+}
+
+.Search-group select:focus {
+  border-color: var(--color-primary);
+  outline: none;
+  background: var(--col-white-100);
+}
+
+/* Set Fee button styles */
+.btn-fees button {
+  background-color: var(--col-secondary-300);
+  color: #fff;
+  border: none;
+  padding: 10px 28px;
+  border-radius: 4px;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s;
+  margin-top: 12px;
+}
+
+.btn-fees button:disabled {
+  background-color: var(--col-gray-300);
+  cursor: not-allowed;
+}
+
+.btn button:hover:not(:disabled) {
+  background-color: var(--col-secondary-500);
+}

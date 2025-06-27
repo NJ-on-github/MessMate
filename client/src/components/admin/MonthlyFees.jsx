@@ -178,7 +178,7 @@ export default function FeeStructureManagement() {
             />
           </div>
 
-          <div className="self-end btn">
+          <div className="btn-fees">
             <button
               onClick={handleSubmit}
               disabled={loading}
@@ -190,7 +190,7 @@ export default function FeeStructureManagement() {
       </div>
 
       <div>
-        <h2 className="text-xl font-semibold mb-4">Existing Fee Structures</h2>
+        <h2>Existing Fee Structures</h2>
 
         {loading && <p>Loading fee structures...</p>}
 

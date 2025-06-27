@@ -56,7 +56,7 @@ const AdminSidebar = () => {
               </NavLink>
               <h3>REGISTRATIONS</h3>
               <NavLink className={"nav-link"} to={"/admin/registrations/pending-approvals"} onClick={handleNavClick}>Pending Approvals</NavLink>
-              <NavLink className={"nav-link"} to={"/admin/registrations/rejected-approvals"} onClick={handleNavClick}>Rejected Approvals</NavLink>
+              <NavLink className={"nav-link"} to={"/admin/registrations/rejected-approvals"} onClick={handleNavClick}>Rejected Registrationss</NavLink>
               <h3>PAYMENTS</h3>
               <NavLink className={"nav-link"} to={"/admin/payments/defaulters"} onClick={handleNavClick}>Defaulters</NavLink>
               <NavLink className={"nav-link"} to={"/admin/payments/payments-by-month"} onClick={handleNavClick}>Payments by Month</NavLink>
