@@ -16,7 +16,7 @@ const TodaysMenu = () => {
   useEffect(() => {
     const fetchMenu = async () => {
       try {
-        const res = await fetch('http://localhost:3000/student/todays-menu');
+        const res = await fetch(`${import.meta.env.VITE_API_URL}/student/todays-menu`);
         const data = await res.json();
         setMenu(data);
       } catch (err) {

@@ -23,13 +23,13 @@ const PaymentsByMonth = () => {
       const formattedMonth = formatMonth(month);
 
       // Fetch payments list
-      const response = await fetch(`http://localhost:3000/admin/payments/month?month=${formattedMonth}`);
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/admin/payments/month?month=${formattedMonth}`);
       if (!response.ok) throw new Error('Failed to fetch payments');
       const data = await response.json();
       setPayments(data);
 
       // Fetch summary
-      const summaryRes = await fetch(`http://localhost:3000/admin/payments/summary?month=${formattedMonth}`);
+      const summaryRes = await fetch(`${import.meta.env.VITE_API_URL}/admin/payments/summary?month=${formattedMonth}`);
       if (!summaryRes.ok) throw new Error('Failed to fetch summary');
       const summaryData = await summaryRes.json();
       setSummary({

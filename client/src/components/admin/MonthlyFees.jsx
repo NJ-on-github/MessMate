@@ -40,7 +40,7 @@ export default function FeeStructureManagement() {
   const fetchFeeStructures = async () => {
     try {
       setLoading(true);
-      const response = await fetch('http://localhost:3000/admin/fees');
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/admin/fees`);
       if (!response.ok) throw new Error('Network response was not ok');
       const data = await response.json();
       setFeeStructures(data);
@@ -79,7 +79,7 @@ export default function FeeStructureManagement() {
   const submitFee = async () => {
     try {
       setLoading(true);
-      const response = await fetch('http://localhost:3000/admin/insert-fee', {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/admin/insert-fee`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

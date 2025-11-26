@@ -28,9 +28,9 @@ const Menu = () => {
   const fetchAllItems = async () => {
     try {
       const [breakfastRes, lunchRes, dinnerRes] = await Promise.all([
-        fetch('http://localhost:3000/admin/Menu/breakfast-items'),
-        fetch('http://localhost:3000/admin/Menu/lunch-items'),
-        fetch('http://localhost:3000/admin/Menu/dinner-items'),
+        fetch(`${import.meta.env.VITE_API_URL}/admin/Menu/breakfast-items`),
+        fetch(`${import.meta.env.VITE_API_URL}/admin/Menu/lunch-items`),
+        fetch(`${import.meta.env.VITE_API_URL}/admin/Menu/dinner-items`),
       ]);
 
       setBreakfastItems(await breakfastRes.json());
@@ -45,7 +45,7 @@ const Menu = () => {
 
   const fetchTodaysMenu = async () => {
     try {
-      const res = await fetch('http://localhost:3000/admin/menu/todays');
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/admin/menu/todays`);
       if (res.status === 404) {
         setMenuAlreadySet(false);
         setSavedMenu({ breakfast: [], lunch: [], dinner: [] });
@@ -78,7 +78,7 @@ const Menu = () => {
 
   const saveMenuConfirmed = async () => {
     try {
-      const res = await fetch('http://localhost:3000/admin/menu/save-todays-menu', {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/admin/menu/save-todays-menu`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(todaysMenu),
@@ -110,7 +110,7 @@ const Menu = () => {
     try {
       if (!newItemName[category]) return alert('Please enter an item name.');
 
-      const res = await fetch(`http://localhost:3000/admin/Menu/add-item`, {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/admin/Menu/add-item`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ name: newItemName[category], category }),
@@ -130,7 +130,7 @@ const Menu = () => {
     if (!window.confirm(`Are you sure you want to remove this item?`)) return;
 
     try {
-      const res = await fetch(`http://localhost:3000/admin/Menu/remove-item`, {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/admin/Menu/remove-item`, {
         method: 'DELETE',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ itemId, category }),

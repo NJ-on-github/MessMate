@@ -25,7 +25,7 @@ const BlockedStudentsList = () => {
 
     const fetchBlocked = async () => {
         try {
-            const res = await fetch('http://localhost:3000/admin/students/blocked-students');
+            const res = await fetch(`${import.meta.env.VITE_API_URL}/admin/students/blocked-students`);
             const data = await res.json();
             setBlockedStudents(data);
         } catch (err) {
@@ -35,7 +35,7 @@ const BlockedStudentsList = () => {
 
     const unblockStudent = async (studentId) => {
         try {
-            const res = await fetch(`http://localhost:3000/admin/students/unblock/${studentId}`, {
+            const res = await fetch(`${import.meta.env.VITE_API_URL}/admin/students/unblock/${studentId}`, {
                 method: 'PATCH',
             });
             if (res.ok) {

@@ -15,7 +15,7 @@ const AllRegistrationsList = () => {
         const fetchStudents = async () => {
             console.log("Executing fetchStudents");
             try {
-                const response = await fetch('http://localhost:3000/admin/students/all-students');
+                const response = await fetch(`${import.meta.env.VITE_API_URL}/admin/students/all-students`);
                 if (!response.ok) {
                     throw new Error('Failed to fetch students');
                 }

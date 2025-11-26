@@ -28,7 +28,7 @@ const BlockedRegistrationsList = () => {
     const fetchBlockedRegistrations = async () => {
         try {
             setError(null); // Clear previous errors
-            const response = await fetch('http://localhost:3000/admin/blocked-registrations');
+            const response = await fetch(`${import.meta.env.VITE_API_URL}/admin/blocked-registrations`);
             if (!response.ok) {
                 throw new Error(`Failed to fetch blocked registrations: ${response.statusText}`);
             }
@@ -50,7 +50,7 @@ const BlockedRegistrationsList = () => {
     const unblockRegistration = async (studentId) => {
         try {
             setError(null); // Clear previous errors
-            const response = await fetch(`http://localhost:3000/admin/unblock-registration/${studentId}`, {
+            const response = await fetch(`${import.meta.env.VITE_API_URL}/admin/unblock-registration/${studentId}`, {
                 method: 'PATCH'
             });
             if (!response.ok) {

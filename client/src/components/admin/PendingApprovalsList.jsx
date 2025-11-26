@@ -27,7 +27,7 @@ const PendingApprovalsList = () => {
     const fetchPendingApprovals = async () => {
         console.log("Executing fetchPendingApprovals");
         try {
-            const response = await fetch('http://localhost:3000/admin/pending-approvals');
+            const response = await fetch(`${import.meta.env.VITE_API_URL}/admin/pending-approvals`);
             if (!response.ok) {
                 throw new Error('Failed to fetch pending approvals');
             }
@@ -50,7 +50,7 @@ const PendingApprovalsList = () => {
     const approveRegistration = (studentId, studentName) => {
         openConfirmDialog(`Are you sure you want to approve ${studentName}'s registration?`, async () => {
             try {
-                const response = await fetch(`http://localhost:3000/admin/approve-registration/${studentId}`, {
+                const response = await fetch(`${import.meta.env.VITE_API_URL}/admin/approve-registration/${studentId}`, {
                     method: 'PATCH'
                 });
                 if (!response.ok) throw new Error('Failed to approve registration');
@@ -64,7 +64,7 @@ const PendingApprovalsList = () => {
         const rejectRegistration = (studentId, studentName) => {
         openConfirmDialog(`Are you sure you want to reject ${studentName}'s registration?`, async () => {
             try {
-                const response = await fetch(`http://localhost:3000/admin/reject-registration/${studentId}`, {
+                const response = await fetch(`${import.meta.env.VITE_API_URL}/admin/reject-registration/${studentId}`, {
                     method: 'PATCH'
                 });
                 if (!response.ok) throw new Error('Failed to reject registration');

@@ -20,12 +20,12 @@ const Dashboard = () => {
                 setLoading(true);
                 
                 // Pending approvals
-                const approvalsRes = await fetch("http://localhost:3000/admin/pending-approvals/count");
+                const approvalsRes = await fetch(`${import.meta.env.VITE_API_URL}/admin/pending-approvals/count`);
                 const approvalsData = await approvalsRes.json();
                 setPendingApprovals(approvalsData.count || 0);
 
                 // Payments summary (pass current month)
-                const paymentsRes = await fetch(`http://localhost:3000/admin/payments/summary?month=${currentMonth}`);
+                const paymentsRes = await fetch(`${import.meta.env.VITE_API_URL}/admin/payments/summary?month=${currentMonth}`);
                 const paymentsData = await paymentsRes.json();
                 setTotalPayments({
                     received: paymentsData.received || 0,
@@ -33,12 +33,12 @@ const Dashboard = () => {
                 });
 
                 // Total students
-                const studentsRes = await fetch("http://localhost:3000/admin/students/count");
+                const studentsRes = await fetch(`${import.meta.env.VITE_API_URL}/admin/students/count`);
                 const studentsData = await studentsRes.json();
                 setTotalStudents(studentsData.count || 0);
 
                 // Today's menu
-                const menuRes = await fetch("http://localhost:3000/student/todays-menu");
+                const menuRes = await fetch(`${import.meta.env.VITE_API_URL}/student/todays-menu`);
                 const menuData = await menuRes.json();
                 if (menuData && (menuData.breakfast?.length || menuData.lunch?.length || menuData.dinner?.length)) {
                     setTodaysMenu(menuData);

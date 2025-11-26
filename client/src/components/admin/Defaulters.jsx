@@ -41,9 +41,7 @@ const Defaulters = () => {
     setError(null);
     try {
       const formattedMonth = formatMonthForQuery(month);
-      const response = await fetch(
-        `http://localhost:3000/admin/payments/month?month=${formattedMonth}`
-      );
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/admin/payments/month?month=${formattedMonth}`);
       if (!response.ok) throw new Error("Failed to fetch payments");
       const data = await response.json();
       const enhancedData = data.map((payment) => ({
@@ -60,7 +58,7 @@ const Defaulters = () => {
 
   const fetchBlockedStudents = async () => {
     try {
-      const response = await fetch(`http://localhost:3000/admin/students/blocked-students`);
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/admin/students/blocked-students`);
       if (!response.ok) throw new Error("Failed to fetch blocked students");
       const data = await response.json();
       setBlockedStudents(data);
@@ -90,8 +88,7 @@ const Defaulters = () => {
     setBlockError(null);
     setBlockSuccess(null);
     try {
-      const response = await fetch(
-        `http://localhost:3000/admin/block-student/${studentId}`,
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/admin/block-student/${studentId}`,
         {
           method: "PATCH",
           headers: { "Content-Type": "application/json" },

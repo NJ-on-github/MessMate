@@ -27,7 +27,7 @@ const StudentPaymentManager = () => {
   const searchPayments = async () => {
     setLoading(true);
     try {
-      const res = await fetch(`http://localhost:3000/admin/payments/update-payments/search?query=${encodeURIComponent(query)}`);
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/admin/payments/update-payments/search?query=${encodeURIComponent(query)}`);
       const data = await res.json();
       setResults(data);
     } catch (err) {
@@ -39,7 +39,7 @@ const StudentPaymentManager = () => {
 
   const markAsPaid = async (paymentId) => {
     try {
-      const res = await fetch(`http://localhost:3000/admin/payments/update-payments/${paymentId}`, {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/admin/payments/update-payments/${paymentId}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ payment_status: 'paid' })

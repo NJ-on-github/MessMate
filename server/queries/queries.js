@@ -173,8 +173,8 @@ WITH months AS (
   WHERE NOT EXISTS (
     SELECT 1 FROM payments 
     WHERE student_id = $1 
-    AND month_year = to_char(af.month_date, 'MM/YYYY')
-    )`;
+    AND month_year = to_char(af.month_date, 'MM-YYYY')
+    );
 
 // const INITIALIZE_STUDENT_PAYMENTS = `
 //   INSERT INTO payments (student_id, fee_id, amount, payment_status, month_year)
