@@ -85,8 +85,17 @@ router.post("/login", async (req, res) => {
         .status(403)
         .json({ error: "pending", registration_status: "pending" });
     }
+    
 
-    // 5. Check if blocked
+    // 5. Check if blocked or rejected
+
+if (student.registration_status === "rejected") {
+      return res.status(403).json({
+        error: "rejected",
+        message: "Your registration is rejected. Please contact the admin."
+      });
+    }
+
     const statusResult = await pool.query(queries.LOGIN_CHECK_ACCOUNT_BLOCK, [
       student.student_id,
     ]);

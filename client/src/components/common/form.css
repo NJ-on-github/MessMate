@@ -3,7 +3,9 @@
     top: 0;
     left: 0;
     width: 100vw;
+    width: 100dvw;
     min-height: 100vh;
+    min-height: 100dvh;
     background: linear-gradient(135deg, 
         var(--col-primary-100) 0%, 
         var(--col-primary-200) 25%, 

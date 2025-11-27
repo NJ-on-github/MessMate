@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import "../common/form.css";
 import "../common/common.css";
+import InfoBox from '../common/InfoBox.jsx';
 
 const StudentRegister = () => {
     const [formData, setFormData] = useState({
@@ -99,6 +100,7 @@ const StudentRegister = () => {
                         Go back to Homepage
                     </Link>
                 </div>
+                <InfoBox />
             </div>
         </div>
     );

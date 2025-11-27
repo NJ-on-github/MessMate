@@ -5,6 +5,7 @@ import './styles/StudentLogin.css'
 import "../common/table.css";
 import "../common/common.css";
 import "../common/form.css";
+import InfoBox from '../common/InfoBox.jsx';
 
 const StudentLogin = () => {
   const [formData, setFormData] = useState({ email: '', password: '' });
@@ -49,6 +50,15 @@ const StudentLogin = () => {
               isSuccess: false
             });
             break;
+
+            case 'rejected':
+          setError({
+            message: 'Registration Rejected',
+            subMessage: 'Your registration is rejected. Please contact the admin.',
+            showForm: false,
+            isSuccess: false
+          });
+          break;
 
           case 'blocked':
             setError({
@@ -149,6 +159,7 @@ const StudentLogin = () => {
             Go back to Homepage
           </Link>
         </div>
+        <InfoBox />
       </div>
     </div>
   );

@@ -4,6 +4,7 @@ import "../common/table.css";
 import "../common/common.css";
 import "../common/form.css";
 import "./LandingPage.css";
+import InfoBox from './InfoBox.jsx';
 
 const LandingPage = () => {
   const navigate = useNavigate();
@@ -38,6 +39,7 @@ const LandingPage = () => {
             </button>
           </div>
           <p className="landing-small-text">Choose how to proceed as</p>
+      <InfoBox />
         </div>
       </div>
     </div>

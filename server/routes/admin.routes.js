@@ -147,36 +147,52 @@ router.patch("/students/unblock/:student_id", async (req, res) => {
 });
 
 //registrations
+// server/routes/admin.routes.js  (or wherever the approve-registration route is)
 router.patch("/approve-registration/:id", async (req, res) => {
   const client = await pool.connect();
 
   try {
-    // Start transaction
+    const studentIdParam = parseInt(req.params.id, 10);
+    if (Number.isNaN(studentIdParam)) {
+      return res.status(400).json({ error: "Invalid student id" });
+    }
+
     await client.query("BEGIN");
 
-    // Set status to approved
-    await client.query(queries.APPROVE_REGISTRATION, [req.params.id]);
+    // 1) Approve the student and ensure a row was updated
+    const approveResult = await client.query(queries.APPROVE_REGISTRATION, [studentIdParam]);
 
-    // Initialize payment rows for all fee months if not already inserted
-    await client.query(queries.INITIALIZE_STUDENT_PAYMENTS, [req.params.id]);
+    if (!approveResult || approveResult.rowCount === 0) {
+      await client.query("ROLLBACK");
+      console.warn(`Approve: no student updated for id=${studentIdParam}`);
+      return res.status(404).json({ error: "Student not found or already approved" });
+    }
 
-    // Commit transaction if all operations succeed
+    const approvedStudentId = approveResult.rows[0].student_id;
+    console.log(`Approve: student ${approvedStudentId} registration set to approved.`);
+
+    // 2) Initialize payments for this student (may insert 0..N rows)
+    const initResult = await client.query(queries.INITIALIZE_STUDENT_PAYMENTS, [approvedStudentId]);
+
+    const paymentsInserted = initResult ? initResult.rowCount || 0 : 0;
+    console.log(`Payments initialized for student ${approvedStudentId}. rowsInserted=${paymentsInserted}`);
+
     await client.query("COMMIT");
 
-    res
-      .status(200)
-      .json({ message: "Student approved and payments initialized." });
+    return res.status(200).json({
+      message: "Student approved and payments initialized.",
+      approvedStudentId,
+      paymentsInserted
+    });
   } catch (err) {
-    // Rollback transaction if any operation fails
-    await client.query("ROLLBACK");
-
+    try { await client.query("ROLLBACK"); } catch (e) { console.error("Rollback error:", e); }
     console.error("Approval error:", err);
-    res.status(500).json({ error: "Failed to approve student." });
+    return res.status(500).json({ error: "Failed to approve student.", detail: err.message });
   } finally {
-    // Release the client back to the pool
     client.release();
   }
 });
+
 
 router.patch("/reject-registration/:id", async (req, res) => {
   try {

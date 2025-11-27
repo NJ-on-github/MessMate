@@ -109,7 +109,10 @@ const COUNT_PENDING_PAYMENTS_THIS_MONTH = `
 
 // ✅ Admin - Approval/Blocking
 const APPROVE_REGISTRATION = `
-UPDATE students SET registration_status = 'approved' WHERE student_id = $1;
+UPDATE students
+SET registration_status = 'approved'
+WHERE student_id = $1
+RETURNING student_id;
 `;
 
 // ADMIN - Registrations - Rejected Approvals
@@ -174,7 +177,7 @@ WITH months AS (
     SELECT 1 FROM payments 
     WHERE student_id = $1 
     AND month_year = to_char(af.month_date, 'MM-YYYY')
-    );
+    );`
 
 // const INITIALIZE_STUDENT_PAYMENTS = `
 //   INSERT INTO payments (student_id, fee_id, amount, payment_status, month_year)

@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { NavLink } from 'react-router-dom';
 import "../common/common.css";
 import "../common/form.css";
+import InfoBox from '../common/InfoBox.jsx';
 
 const AdminLogin = () => {
   const [adminData, setAdminData] = useState({ email: '', password: '' });
@@ -116,6 +117,7 @@ const AdminLogin = () => {
             Go back to Homepage
           </NavLink>
         </div>
+        <InfoBox />
       </div>
     </div>
   );

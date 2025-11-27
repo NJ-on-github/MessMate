@@ -10,9 +10,9 @@ const PendingApprovalsList = () => {
     const [dialog, setDialog] = useState({
         isOpen: false,
         message: '',
-        onConfirm: () => {}
+        onConfirm: () => { }
     });
-     const openConfirmDialog = (message, onConfirmAction) => {
+    const openConfirmDialog = (message, onConfirmAction) => {
         setDialog({
             isOpen: true,
             message,
@@ -53,7 +53,10 @@ const PendingApprovalsList = () => {
                 const response = await fetch(`${import.meta.env.VITE_API_URL}/admin/approve-registration/${studentId}`, {
                     method: 'PATCH'
                 });
-                if (!response.ok) throw new Error('Failed to approve registration');
+                if (!response.ok) {
+                    const errBody = await response.json().catch(() => ({}));
+                    throw new Error(errBody.error || 'Failed to approve registration');
+                };
                 fetchPendingApprovals();
             } catch (err) {
                 setError(err.message);
@@ -61,7 +64,7 @@ const PendingApprovalsList = () => {
         });
     };
 
-        const rejectRegistration = (studentId, studentName) => {
+    const rejectRegistration = (studentId, studentName) => {
         openConfirmDialog(`Are you sure you want to reject ${studentName}'s registration?`, async () => {
             try {
                 const response = await fetch(`${import.meta.env.VITE_API_URL}/admin/reject-registration/${studentId}`, {
@@ -80,62 +83,62 @@ const PendingApprovalsList = () => {
             <h2 className='table-heading'>Pending Approvals</h2>
             <p className="page-desc">List of registrations that are yet to be approved</p>
             <div className="table-container">
-            <table>
-                <thead>
-                    <tr>
-                        <th>Student ID</th>
-                        <th>Name</th>
-                        <th>Email</th>
-                        <th>Hostel</th>
-                        <th>Branch</th>
-                        <th>Reject</th>
-                        <th>Approve</th>
-                    </tr>
-                </thead>
-                {isEmpty && <div>No students found</div>}
-                {error && <div>Error: {error}</div>}
-                {loading && <div>Loading...</div>}
-                <tbody>
-                {receivedData.map((student) => (
-                    <tr key={student.student_id}>
-                        <td>{student.student_id}</td>
-                        <td>{student.name}</td>
-                        <td>{student.email}</td>
-                        <td>{student.hostel_name}</td>
-                        <td>{student.branch}</td>
-                        <td>
-                            <button 
-                                className='btn-warning' 
-                                onClick={() => rejectRegistration(student.student_id, student.name)}
-                            >
-                                Reject
-                            </button>
-                        </td>
-                        <td>
-                            <button 
-                                className='btn-success' 
-                                onClick={() => approveRegistration(student.student_id, student.name)}
-                            >
-                                Approve
-                            </button>
-                        </td>
-                    </tr>
-                ))}
-            </tbody>
-            </table>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Student ID</th>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Hostel</th>
+                            <th>Branch</th>
+                            <th>Reject</th>
+                            <th>Approve</th>
+                        </tr>
+                    </thead>
+                    {isEmpty && <div>No students found</div>}
+                    {error && <div>Error: {error}</div>}
+                    {loading && <div>Loading...</div>}
+                    <tbody>
+                        {receivedData.map((student) => (
+                            <tr key={student.student_id}>
+                                <td>{student.student_id}</td>
+                                <td>{student.name}</td>
+                                <td>{student.email}</td>
+                                <td>{student.hostel_name}</td>
+                                <td>{student.branch}</td>
+                                <td>
+                                    <button
+                                        className='btn-warning'
+                                        onClick={() => rejectRegistration(student.student_id, student.name)}
+                                    >
+                                        Reject
+                                    </button>
+                                </td>
+                                <td>
+                                    <button
+                                        className='btn-success'
+                                        onClick={() => approveRegistration(student.student_id, student.name)}
+                                    >
+                                        Approve
+                                    </button>
+                                </td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
             </div>
             {receivedData.length === 0 && <div>No pending approvals found</div>}
             <div>
-            {/* your existing table code */}
-            <ConfirmDialog
-                isOpen={dialog.isOpen}
-                message={dialog.message}
-                onConfirm={dialog.onConfirm}
-                onCancel={() => setDialog({ ...dialog, isOpen: false })}
-            />
+                {/* your existing table code */}
+                <ConfirmDialog
+                    isOpen={dialog.isOpen}
+                    message={dialog.message}
+                    onConfirm={dialog.onConfirm}
+                    onCancel={() => setDialog({ ...dialog, isOpen: false })}
+                />
+            </div>
         </div>
-        </div>
-        
+
     )
 }
 
