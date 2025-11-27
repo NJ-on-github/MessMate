@@ -39,8 +39,8 @@ const LandingPage = () => {
             </button>
           </div>
           <p className="landing-small-text">Choose how to proceed as</p>
-      <InfoBox />
         </div>
+      <InfoBox />
       </div>
     </div>
   );

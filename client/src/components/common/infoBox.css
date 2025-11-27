@@ -1,111 +1,73 @@
-/* client/src/components/common/common.css – REPLACE the entire info-box block with this */
+/* client/src/components/common/common.css – add/replace this block */
 
 .info-box-wrapper {
   position: fixed;
+  bottom: 1rem;
+  left: 50%;
+  transform: translateX(-50%);
   z-index: 999;
-  pointer-events: none; /* Allows clicks to pass through background */
-  transition: all 0.3s ease;
-}
-
-/* Desktop: Right sidebar style */
-@media (min-width: 769px) {
-  .info-box-wrapper {
-    top: 80%;
-    right: 2rem;
-    transform: translateY(-50%);
-    max-width: 380px;
-    width: 100%;
-  }
-}
-
-/* Mobile & Tablet: Bottom floating card */
-@media (max-width: 768px) {
-  .info-box-wrapper {
-    bottom: 3rem;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 92%;
-    max-width: 420px;
-  }
+  width: 92%;
+  max-width: 420px;
+  pointer-events: none;           /* allows clicks to pass through when closed */
 }
 
 .info-box {
   background: var(--col-white-100);
   border: 1px solid var(--col-gray-300);
   border-radius: var(--space-lg);
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
   overflow: hidden;
-  pointer-events: auto;
-  max-height: 90vh;
   transition: all 0.3s ease;
-  backdrop-filter: blur(8px);
-  background: rgba(255, 255, 255, 0.97);
+  pointer-events: auto;           /* re-enable interaction for the box itself */
+  max-height: 90vh;
 }
 
 .info-box.closed {
-  max-height: 64px;
+  max-height: 60px;
 }
 
 .info-toggle {
   width: 100%;
   padding: var(--space-md);
-  background: var(--col-secondary-500);
+  background: var(--col-secondary-400);
   color: white;
   border: none;
   font-weight: 600;
   cursor: pointer;
   text-align: center;
-  font-size: 1rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.5rem;
-}
-
-.info-toggle::after {
-  content: "▼";
-  font-size: 0.8rem;
-  transition: transform 0.3s ease;
-}
-
-.info-box.closed .info-toggle::after {
-  transform: rotate(180deg);
+  font-size: 0.95rem;
 }
 
 .info-content {
   padding: var(--space-lg);
   padding-top: var(--space-md);
   overflow-y: auto;
-  max-height: calc(90vh - 64px);
-  -webkit-overflow-scrolling: touch;
+  max-height: calc(90vh - 60px);
+  -webkit-overflow-scrolling: touch; /* smooth scrolling on iOS */
 }
 
 .info-title {
   margin: 0 0 var(--space-md);
-  font-size: 1.25rem;
+  font-size: 1.2rem;
   font-weight: 700;
   color: var(--col-primary-700);
   text-align: center;
 }
 
 .info-description {
-  font-size: 0.94rem;
+  font-size: 0.9rem;
   color: var(--col-gray-700);
-  line-height: 1.6;
+  line-height: 1.5;
   margin-bottom: var(--space-lg);
   text-align: center;
-  background: var(--col-primary-50);
-  padding: var(--space-md);
-  border-radius: var(--space-md);
-  border-left: 4px solid var(--col-primary-500);
 }
 
 .account-section h4 {
-  margin: var(--space-lg) 0 var(--space-sm);
-  font-size: 1.1rem;
+  margin: var(--space-lg) 0 var(--space-md);
+  font-size: 1.05rem;
   color: var(--col-secondary-700);
+  border-bottom: 1px solid var(--col-gray-200);
   padding-bottom: var(--space-2);
-  border-bottom: 2px solid var(--col-primary-200);
 }
 
 .account-item {
@@ -113,20 +75,17 @@
   padding: var(--space-md);
   border-radius: var(--space-md);
   margin-bottom: var(--space-md);
-  font-size: 0.94rem;
-  border-left: 3px solid var(--col-primary-400);
+  font-size: 0.92rem;
 }
 
 .account-item strong {
   display: block;
-  color: var(--col-primary-700);
+  color: var(--col-primary-600);
   margin-bottom: var(--space-1);
-  font-weight: 600;
 }
 
 .account-item div {
   word-break: break-all;
-  color: var(--col-gray-800);
 }
 
 .github-link {
@@ -136,25 +95,23 @@
 
 .github-link a {
   display: inline-block;
-  background: linear-gradient(135deg, var(--col-primary-500), var(--col-primary-600));
+  background: var(--col-secondary-500);
   color: white;
-  padding: var(--space-3) var(--space-5);
+  padding: var(--space-2) var(--space-4);
   border-radius: 999px;
   text-decoration: none;
   font-weight: 600;
-  font-size: 0.95rem;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  transition: all 0.2s ease;
+  font-size: 0.9rem;
+  transition: background 0.2s;
 }
 
 .github-link a:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+  background: var(--col-primary-600);
 }
 
-/* Ultra small screens */
+/* Extra small screens – make sure it never overflows */
 @media (max-height: 600px) {
   .info-content {
-    max-height: calc(75vh - 64px);
+    max-height: calc(80vh - 60px);
   }
 }
